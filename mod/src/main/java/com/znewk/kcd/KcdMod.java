@@ -6,8 +6,11 @@ import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -24,10 +27,18 @@ public class KcdMod {
         NeoForge.EVENT_BUS.register(this);
     }
 
+    private static String version;
+
+    /** Версия мода. Читается из ресурса, т.к. заголовок окна создаётся раньше, чем готов ModList. */
     public static String version() {
-        return ModList.get().getModContainerById(MODID)
-            .map(c -> c.getModInfo().getVersion().toString())
-            .orElse("?");
+        if (version == null) {
+            try (InputStream in = KcdMod.class.getResourceAsStream("/kcd_version.txt")) {
+                version = in == null ? "?" : new String(in.readAllBytes(), StandardCharsets.UTF_8).trim();
+            } catch (IOException e) {
+                version = "?";
+            }
+        }
+        return version;
     }
 
     public static String windowTitle() {
