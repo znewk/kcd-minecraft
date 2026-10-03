@@ -340,7 +340,19 @@
 6. ~~Защита мира~~ — готово (v0.0.5, `auth/`): без паролей — при первом входе ник привязывается к ПК (ключ в
    `<игра>/kcd/keys.json`, не попадает в архив), чужой ПК с тем же ником отключается; хост не проверяется;
    сброс — `/kcd auth reset <ник>`. Привязка сохраняется на диск сразу. Сетевой протокол — версия 3.
-Потом M2 — рельеф и Скалица (регионы включат музыку деревни/корчмы/церкви).
+**M2 — мир и Скалица (в работе, 03.10.2026).** Движок готов и проверен в игре:
+- Тип мира «KCD: Богемия 1403» (`world/gen/KcdChunkGenerator`, пресет `data/kcd/worldgen/world_preset/kcd.json`):
+  рельеф и покрытие из `kcdmap/world.bin.gz` (`KcdMap`: высота 0..255 и код покрытия на каждый блок, 1 блок = 1 м,
+  (0,0) — рынок Скалицы), посевы, деревья/трава по покрытию, без пещер/руд/мобов. Режим приключения (`KcdWorldRules`).
+- Карту рисует `tools/map/GenMap.java` (`tools/map/genmap.ps1`) из `tools/map/skalitz.json` (холмы, ручьи с уровнем
+  по течению, пруды, области покрытия, дороги со сглаживанием) + площадки под постройками → превью `tools/map/out/map.png`.
+- Постройки — `kcdmap/buildings.json` (type, x, z, w, d, rot, стиль…), строители `world/gen/BuildingKit` (house
+  timber/log/plaster/stone, forge, tavern, keep, hall, gatehouse, wall, palisade, stall, pillory, well, mill, barn,
+  shed, pen, mine, cart, hay, tables, fence, tree); все собираются в память и ставятся по чанкам при генерации.
+- «Новое прохождение (я хост)» в меню отряда — мир KCD в один клик (`client/NewPlaythrough`, mixin-invoker);
+  предупреждение об экспериментальных настройках отключено (mixins). Автотест: `-Dkcd.autonew=true`.
+- Сейчас в плане ЧЕРНОВАЯ Скалица; точный план — `docs/research-skalitz-layout.md` (исследование).
+Дальше: Скалица по плану, жители по местам (распорядок), регионы → музыка деревни/корчмы.
 **Как тестировать:** `tools/testlaunch.ps1` (один клиент; -Single мир, -Join адрес, -Shot снимок),
 `tools/cooptest.ps1` (хост + «друг» на localhost, роли выбираются сами: -Dkcd.autorole; -HostExtra/-FriendExtra).
 Автотест без мыши (`client/AutoTest`): `-Dkcd.autocmd="kcd npc spawn kcd:martin;kcd npc talk;~3;!shot"`

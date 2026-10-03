@@ -64,6 +64,11 @@ public final class Buildings {
 
     private Buildings() {}
 
+    /** Прочитать план (и запланировать жителей), если ещё не читали. */
+    public static void ensureLoaded() {
+        ensureBuilt();
+    }
+
     private static synchronized void ensureBuilt() {
         if (byChunk != null) return;
         List<Spec> specs = load();
@@ -111,7 +116,7 @@ public final class Buildings {
             for (JsonElement e : GsonHelper.getAsJsonArray(root, "buildings")) {
                 JsonObject o = e.getAsJsonObject();
                 out.add(new Spec(GsonHelper.getAsString(o, "type"), GsonHelper.getAsInt(o, "x", 0), GsonHelper.getAsInt(o, "z", 0),
-                    GsonHelper.getAsInt(o, "w", 1), GsonHelper.getAsInt(o, "d", 1), GsonHelper.getAsInt(o, "rot", 0), o));
+                    GsonHelper.getAsInt(o, "w", 1), GsonHelper.getAsInt(o, "d", GsonHelper.getAsInt(o, "w", 1)), GsonHelper.getAsInt(o, "rot", 0), o));
             }
         } catch (Exception e) {
             KcdMod.LOGGER.error("KCD: план построек не прочитан", e);

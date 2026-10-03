@@ -33,6 +33,7 @@ import com.znewk.kcd.stats.KcdStats;
 import com.znewk.kcd.world.TestVillage;
 import com.znewk.kcd.world.gen.KcdWorldgen;
 import com.znewk.kcd.world.gen.KcdWorldRules;
+import com.znewk.kcd.world.gen.WorldNpcs;
 
 /** Главный класс мода KCD. Здесь подключаются все системы (отряд, диалоги, квесты, NPC...). */
 @Mod(KcdMod.MODID)
@@ -69,6 +70,7 @@ public class KcdMod {
         NeoForge.EVENT_BUS.addListener(AuthService::onLogin);
         NeoForge.EVENT_BUS.addListener(KcdWorldRules::onServerStarted);
         NeoForge.EVENT_BUS.addListener(KcdWorldRules::onLogin);
+        NeoForge.EVENT_BUS.addListener(WorldNpcs::onServerTick);
         NeoForge.EVENT_BUS.addListener(AuthService::onLogout);
         NeoForge.EVENT_BUS.addListener(AuthService::onServerTick);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> AuthService.registerCommands(e.getDispatcher()));

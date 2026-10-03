@@ -101,6 +101,15 @@ public class GenMap {
             });
         }
 
+        // 4б. скальные выходы: на крутых склонах (перепад ≥ 2 м на метр) трава не держится — серый камень
+        for (int pz = 1; pz < D - 1; pz++) for (int px = 1; px < W - 1; px++) {
+            int i = pz * W + px;
+            if (fixedH[i] || !(land[i] == GRASS || land[i] == MEADOW || land[i] == FOREST)) continue;
+            double slope = Math.max(Math.max(Math.abs(h[i] - h[i - 1]), Math.abs(h[i] - h[i + 1])),
+                Math.max(Math.abs(h[i] - h[i - W]), Math.abs(h[i] - h[i + W])));
+            if (slope >= 1.6) land[i] = (byte) ROCK;
+        }
+
         // 5. вода: ручьи (уровень не растёт по течению) и пруды
         for (JsonElement e : arr(spec, "brooks")) brook(e.getAsJsonObject());
         for (JsonElement e : arr(spec, "ponds")) pond(e.getAsJsonObject());
@@ -169,7 +178,8 @@ public class GenMap {
 
     // ------------------------------------------------------------------ площадки
 
-    static final java.util.Set<String> PADDED = java.util.Set.of("house", "forge", "tavern", "keep", "hall", "gatehouse", "mill", "barn", "shed", "stall", "pen", "well");
+    static final java.util.Set<String> PADDED = java.util.Set.of("house", "forge", "tavern", "keep", "tower", "palace", "hall", "gatehouse",
+        "watchtower", "mill", "barn", "shed", "stall", "pen", "well");
 
     static void pad(JsonObject b) {
         String type = b.get("type").getAsString();
@@ -180,12 +190,12 @@ public class GenMap {
         }
         if (!PADDED.contains(type)) return;
         int rot = b.has("rot") ? b.get("rot").getAsInt() : 0;
-        int w = b.get("w").getAsInt(), d = b.get("d").getAsInt();
+        int w = b.get("w").getAsInt(), d = b.has("d") ? b.get("d").getAsInt() : w;
         int sx = rot == 90 || rot == 270 ? d : w, sz = rot == 90 || rot == 270 ? w : d;
         int cx = b.get("x").getAsInt(), cz = b.get("z").getAsInt();
         int x0 = cx - sx / 2, z0 = cz - sz / 2;
         double y = b.has("y") ? b.get("y").getAsDouble() : Math.round(hAt(cx, cz));
-        int m = type.equals("keep") || type.equals("gatehouse") ? 2 : 3;
+        int m = type.equals("keep") || type.equals("tower") || type.equals("gatehouse") ? 2 : 3;
         for (int z = z0 - m - 3; z < z0 + sz + m + 3; z++) for (int x = x0 - m - 3; x < x0 + sx + m + 3; x++) {
             int px = x - OX, pz = z - OZ;
             if (px < 0 || pz < 0 || px >= W || pz >= D) continue;
@@ -231,7 +241,7 @@ public class GenMap {
                     continue;
                 }
                 if (!o.has("w")) { dot(img, o.get("x").getAsInt(), o.get("z").getAsInt(), 0x103010); continue; }
-                int rot = o.has("rot") ? o.get("rot").getAsInt() : 0, w = o.get("w").getAsInt(), d = o.get("d").getAsInt();
+                int rot = o.has("rot") ? o.get("rot").getAsInt() : 0, w = o.get("w").getAsInt(), d = o.has("d") ? o.get("d").getAsInt() : w;
                 int sx = rot == 90 || rot == 270 ? d : w, sz = rot == 90 || rot == 270 ? w : d;
                 int x0 = o.get("x").getAsInt() - sx / 2 - OX, z0 = o.get("z").getAsInt() - sz / 2 - OZ;
                 for (int z = z0; z < z0 + sz; z++) for (int x = x0; x < x0 + sx; x++) {

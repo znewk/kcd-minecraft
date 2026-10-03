@@ -29,7 +29,14 @@ public final class AutoTest {
 
     public static void clientTick() {
         Minecraft mc = Minecraft.getInstance();
-        if (QUEUE.isEmpty() || mc.player == null || --wait > 0) return;
+        if (QUEUE.isEmpty() || mc.player == null) return;
+        // окно теста могло потерять фокус — игра встала на паузу; снимки с меню паузы бесполезны
+        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) {
+            mc.setScreen(null);
+            wait = Math.max(wait, 10);
+            return;
+        }
+        if (--wait > 0) return;
         String step = QUEUE.poll();
         if (step.startsWith("~")) {
             wait = Integer.parseInt(step.substring(1)) * 20;

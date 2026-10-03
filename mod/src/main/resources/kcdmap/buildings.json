@@ -1,32 +1,879 @@
 {
-  "_": "ЧЕРНОВИК для проверки движка. Будет заменён планом Скалицы по картам KCD. rot: 0 — вход с севера, 90 — с востока, 180 — с юга, 270 — с запада.",
+  "_": "Скалица KCD1 по карте с сеткой в метрах (KCD-ref). (0,0) — у рынка, x — восток, z — юг. rot: 0 — вход с севера, 90 — с востока, 180 — с юга, 270 — с запада. Порядок важен: ворота после частокола (прорезают проём).",
   "buildings": [
-    { "type": "keep", "x": -72, "z": -95, "w": 11, "d": 11, "h": 20 },
-    { "type": "wall", "h": 8, "points": [[-95,-118],[-48,-118],[-45,-70],[-95,-68],[-95,-118]] },
-    { "type": "gatehouse", "x": -58, "z": -68, "w": 9, "d": 5, "rot": 180, "material": "stone" },
-    { "type": "hall", "x": -82, "z": -80, "w": 9, "d": 14, "rot": 90 },
-
-    { "type": "house", "x": -38, "z": -42, "w": 7, "d": 9, "rot": 135, "style": "timber", "floors": 1 },
-    { "type": "forge", "x": -26, "z": -46, "w": 7, "d": 7, "rot": 180 },
-    { "type": "tree", "x": -44, "z": -34 },
-
-    { "type": "tavern", "x": 22, "z": -22, "w": 9, "d": 13, "rot": 180 },
-    { "type": "tables", "x": 22, "z": -10, "w": 7, "d": 1 },
-    { "type": "stall", "x": -6, "z": -6, "w": 4, "d": 3, "color": 0 },
-    { "type": "stall", "x": 7, "z": 5, "w": 4, "d": 3, "rot": 180, "color": 1 },
-    { "type": "pillory", "x": 3, "z": -3, "w": 1, "d": 1 },
-    { "type": "well", "x": -4, "z": 6, "w": 1, "d": 1 },
-    { "type": "house", "x": -24, "z": 14, "w": 7, "d": 10, "rot": 90, "style": "plaster", "floors": 2 },
-    { "type": "house", "x": 26, "z": 18, "w": 6, "d": 8, "rot": 270, "style": "log" },
-    { "type": "house", "x": -20, "z": -16, "w": 6, "d": 8, "rot": 90, "style": "timber" },
-    { "type": "house", "x": 8, "z": 30, "w": 6, "d": 8, "rot": 0, "style": "log" },
-    { "type": "house", "x": -48, "z": 40, "w": 6, "d": 8, "rot": 90, "style": "timber" },
-    { "type": "pen", "x": 40, "z": 42, "w": 16, "d": 12, "inside": "training" },
-    { "type": "barn", "x": 52, "z": 26, "w": 10, "d": 6, "rot": 270 },
-    { "type": "mill", "x": 108, "z": 60, "w": 7, "d": 9, "rot": 270 },
-    { "type": "palisade", "h": 4, "points": [[-50,-60],[-60,0],[-60,60],[0,80],[60,70],[70,0],[50,-50],[0,-60],[-40,-62]] },
-    { "type": "gatehouse", "x": 70, "z": 2, "w": 7, "d": 4, "rot": 90, "material": "wood" },
-    { "type": "cart", "x": -14, "z": -26, "w": 2, "d": 3 },
-    { "type": "hay", "x": 48, "z": 36, "w": 2, "d": 2 }
+    {
+      "type": "wall",
+      "h": 7,
+      "points": [
+        [
+          -156,
+          5
+        ],
+        [
+          -94,
+          5
+        ],
+        [
+          -91,
+          58
+        ],
+        [
+          -152,
+          62
+        ],
+        [
+          -156,
+          5
+        ]
+      ]
+    },
+    {
+      "type": "palace",
+      "x": -130,
+      "z": 18,
+      "w": 14,
+      "d": 28,
+      "rot": 90
+    },
+    {
+      "type": "tower",
+      "x": -105,
+      "z": 21,
+      "w": 11,
+      "h": 24
+    },
+    {
+      "type": "house",
+      "x": -120,
+      "z": 48,
+      "w": 8,
+      "d": 12,
+      "rot": 270,
+      "style": "stone",
+      "roof": "slate"
+    },
+    {
+      "type": "gatehouse",
+      "x": -93,
+      "z": 35,
+      "w": 7,
+      "d": 5,
+      "rot": 90,
+      "material": "stone"
+    },
+    {
+      "type": "logwall",
+      "h": 3,
+      "points": [
+        [
+          -166,
+          -3
+        ],
+        [
+          -88,
+          -6
+        ],
+        [
+          -82,
+          24
+        ],
+        [
+          -82,
+          46
+        ],
+        [
+          -80,
+          70
+        ],
+        [
+          -160,
+          75
+        ],
+        [
+          -171,
+          35
+        ],
+        [
+          -166,
+          -3
+        ]
+      ]
+    },
+    {
+      "type": "gatehouse",
+      "x": -82,
+      "z": 35,
+      "w": 7,
+      "d": 5,
+      "rot": 90,
+      "material": "wood"
+    },
+    {
+      "type": "npc",
+      "id": "kcd:guard",
+      "x": -77,
+      "z": 33,
+      "yaw": -90
+    },
+    {
+      "type": "palisade",
+      "h": 4,
+      "points": [
+        [
+          -96,
+          -8
+        ],
+        [
+          -80,
+          -34
+        ],
+        [
+          -38,
+          -45
+        ],
+        [
+          -40,
+          -69
+        ],
+        [
+          -24,
+          -78
+        ],
+        [
+          0,
+          -73
+        ],
+        [
+          16,
+          -64
+        ],
+        [
+          30,
+          -40
+        ],
+        [
+          56,
+          -24
+        ],
+        [
+          78,
+          -10
+        ],
+        [
+          84,
+          24
+        ],
+        [
+          80,
+          64
+        ],
+        [
+          64,
+          82
+        ],
+        [
+          32,
+          94
+        ],
+        [
+          0,
+          100
+        ],
+        [
+          -32,
+          95
+        ],
+        [
+          -64,
+          85
+        ],
+        [
+          -96,
+          81
+        ],
+        [
+          -136,
+          77
+        ],
+        [
+          -166,
+          67
+        ]
+      ]
+    },
+    {
+      "type": "gatehouse",
+      "x": -38,
+      "z": -46,
+      "w": 7,
+      "d": 4,
+      "rot": 0,
+      "material": "wood"
+    },
+    {
+      "type": "gatehouse",
+      "x": 29,
+      "z": -42,
+      "w": 7,
+      "d": 4,
+      "rot": 0,
+      "material": "wood"
+    },
+    {
+      "type": "gatehouse",
+      "x": 56,
+      "z": 85,
+      "w": 7,
+      "d": 4,
+      "rot": 180,
+      "material": "wood"
+    },
+    {
+      "type": "watchtower",
+      "x": -19,
+      "z": -77,
+      "w": 3
+    },
+    {
+      "type": "watchtower",
+      "x": 82,
+      "z": 26,
+      "w": 3
+    },
+    {
+      "type": "watchtower",
+      "x": -2,
+      "z": 101,
+      "w": 3
+    },
+    {
+      "type": "stall",
+      "x": -24,
+      "z": 0,
+      "w": 4,
+      "d": 3,
+      "rot": 90,
+      "color": 0
+    },
+    {
+      "type": "stall",
+      "x": -10,
+      "z": -5,
+      "w": 4,
+      "d": 3,
+      "rot": 180,
+      "color": 1
+    },
+    {
+      "type": "stall",
+      "x": -29,
+      "z": 14,
+      "w": 4,
+      "d": 3,
+      "rot": 90,
+      "color": 3
+    },
+    {
+      "type": "stall",
+      "x": -3,
+      "z": 18,
+      "w": 4,
+      "d": 3,
+      "rot": 270,
+      "color": 2
+    },
+    {
+      "type": "pillory",
+      "x": -18,
+      "z": 18,
+      "w": 1,
+      "d": 1
+    },
+    {
+      "type": "well",
+      "x": -13,
+      "z": 8,
+      "w": 1,
+      "d": 1
+    },
+    {
+      "type": "stall",
+      "x": -24,
+      "z": 22,
+      "w": 4,
+      "d": 3,
+      "rot": 0,
+      "color": 2
+    },
+    {
+      "type": "npc",
+      "id": "kcd:charcoal_burner",
+      "x": -24,
+      "z": 25,
+      "yaw": 180
+    },
+    {
+      "type": "npc",
+      "id": "kcd:peasant",
+      "x": -8,
+      "z": 11,
+      "yaw": 90
+    },
+    {
+      "type": "tavern",
+      "x": 11,
+      "z": 5,
+      "w": 12,
+      "d": 18,
+      "rot": 270
+    },
+    {
+      "type": "tables",
+      "x": 0,
+      "z": 3,
+      "w": 7,
+      "d": 1,
+      "rot": 90
+    },
+    {
+      "type": "tree",
+      "x": 2,
+      "z": 24
+    },
+    {
+      "type": "house",
+      "x": -8,
+      "z": -46,
+      "w": 10,
+      "d": 16,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -16,
+      "z": -26,
+      "w": 8,
+      "d": 13,
+      "rot": 180,
+      "style": "log",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": -4,
+      "z": -21,
+      "w": 8,
+      "d": 12,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": 7,
+      "z": -35,
+      "w": 8,
+      "d": 13,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -26,
+      "z": -24,
+      "w": 8,
+      "d": 12,
+      "rot": 180,
+      "style": "timber",
+      "roof": "shingle",
+      "floors": 2
+    },
+    {
+      "type": "house",
+      "x": -38,
+      "z": -13,
+      "w": 8,
+      "d": 11,
+      "rot": 90,
+      "style": "pink",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": -54,
+      "z": -21,
+      "w": 8,
+      "d": 12,
+      "rot": 90,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 11,
+      "z": -53,
+      "w": 7,
+      "d": 10,
+      "rot": 180,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 21,
+      "z": -22,
+      "w": 9,
+      "d": 12,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "shingle",
+      "floors": 2
+    },
+    {
+      "type": "tree",
+      "x": -12,
+      "z": -13
+    },
+    {
+      "type": "house",
+      "x": 34,
+      "z": -10,
+      "w": 8,
+      "d": 13,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 46,
+      "z": -8,
+      "w": 8,
+      "d": 12,
+      "rot": 180,
+      "style": "log",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": 58,
+      "z": 6,
+      "w": 8,
+      "d": 13,
+      "rot": 270,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 19,
+      "z": 27,
+      "w": 8,
+      "d": 13,
+      "rot": 270,
+      "style": "whitewash",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": 30,
+      "z": 37,
+      "w": 8,
+      "d": 12,
+      "rot": 270,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 42,
+      "z": 51,
+      "w": 8,
+      "d": 13,
+      "rot": 0,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "barn",
+      "x": 18,
+      "z": 72,
+      "w": 9,
+      "d": 16,
+      "rot": 270,
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 32,
+      "z": 67,
+      "w": 8,
+      "d": 11,
+      "rot": 90,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 56,
+      "z": 61,
+      "w": 9,
+      "d": 14,
+      "rot": 270,
+      "style": "timber",
+      "roof": "shingle",
+      "floors": 2
+    },
+    {
+      "type": "npc",
+      "id": "kcd:peasant",
+      "x": 24,
+      "z": 16,
+      "yaw": 180
+    },
+    {
+      "type": "house",
+      "x": -11,
+      "z": 37,
+      "w": 8,
+      "d": 12,
+      "rot": 90,
+      "style": "whitewash",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": -8,
+      "z": 53,
+      "w": 8,
+      "d": 13,
+      "rot": 90,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -42,
+      "z": 10,
+      "w": 8,
+      "d": 11,
+      "rot": 90,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -61,
+      "z": 19,
+      "w": 8,
+      "d": 11,
+      "rot": 90,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -69,
+      "z": 48,
+      "w": 7,
+      "d": 11,
+      "rot": 90,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "shed",
+      "x": -66,
+      "z": 64,
+      "w": 6,
+      "d": 8,
+      "rot": 0
+    },
+    {
+      "type": "house",
+      "x": -46,
+      "z": 62,
+      "w": 8,
+      "d": 13,
+      "rot": 90,
+      "style": "whitewash",
+      "roof": "shingle"
+    },
+    {
+      "type": "forge",
+      "x": -32,
+      "z": 74,
+      "w": 9,
+      "d": 7,
+      "rot": 0
+    },
+    {
+      "type": "tree",
+      "x": -56,
+      "z": 74
+    },
+    {
+      "type": "npc",
+      "id": "kcd:martin",
+      "x": -32,
+      "z": 73,
+      "yaw": 180
+    },
+    {
+      "type": "pen",
+      "x": -18,
+      "z": 86,
+      "w": 16,
+      "d": 12,
+      "inside": "training"
+    },
+    {
+      "type": "pen",
+      "x": -45,
+      "z": 80,
+      "w": 10,
+      "d": 7,
+      "inside": "sheep"
+    },
+    {
+      "type": "cart",
+      "x": -24,
+      "z": 64,
+      "w": 2,
+      "d": 3
+    },
+    {
+      "type": "logs",
+      "x": -37,
+      "z": 67,
+      "w": 5,
+      "d": 1
+    },
+    {
+      "type": "house",
+      "x": 27,
+      "z": 136,
+      "w": 7,
+      "d": 10,
+      "rot": 90,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 50,
+      "z": 120,
+      "w": 8,
+      "d": 11,
+      "rot": 0,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 76,
+      "z": 138,
+      "w": 8,
+      "d": 12,
+      "rot": 270,
+      "style": "whitewash",
+      "roof": "shingle"
+    },
+    {
+      "type": "house",
+      "x": 94,
+      "z": 152,
+      "w": 7,
+      "d": 10,
+      "rot": 0,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": 108,
+      "z": 128,
+      "w": 8,
+      "d": 11,
+      "rot": 270,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "barn",
+      "x": 80,
+      "z": 120,
+      "w": 8,
+      "d": 12,
+      "rot": 0,
+      "roof": "thatch"
+    },
+    {
+      "type": "npc",
+      "id": "kcd:peasant",
+      "x": 58,
+      "z": 128,
+      "yaw": 0
+    },
+    {
+      "type": "palisade",
+      "h": 3,
+      "points": [
+        [
+          -20,
+          161
+        ],
+        [
+          56,
+          165
+        ],
+        [
+          66,
+          197
+        ],
+        [
+          -20,
+          199
+        ],
+        [
+          -20,
+          161
+        ]
+      ]
+    },
+    {
+      "type": "mill",
+      "x": -5,
+      "z": 171,
+      "w": 9,
+      "d": 13,
+      "rot": 0
+    },
+    {
+      "type": "barn",
+      "x": 36,
+      "z": 186,
+      "w": 10,
+      "d": 26,
+      "rot": 90,
+      "roof": "shingle"
+    },
+    {
+      "type": "logs",
+      "x": 16,
+      "z": 182,
+      "w": 6,
+      "d": 1
+    },
+    {
+      "type": "hay",
+      "x": 20,
+      "z": 190,
+      "w": 2,
+      "d": 2
+    },
+    {
+      "type": "house",
+      "x": -120,
+      "z": 144,
+      "w": 7,
+      "d": 10,
+      "rot": 0,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "barn",
+      "x": -90,
+      "z": 147,
+      "w": 7,
+      "d": 16,
+      "rot": 90,
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -86,
+      "z": -101,
+      "w": 7,
+      "d": 11,
+      "rot": 180,
+      "style": "whitewash",
+      "roof": "thatch"
+    },
+    {
+      "type": "house",
+      "x": -72,
+      "z": -112,
+      "w": 7,
+      "d": 10,
+      "rot": 180,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "shed",
+      "x": -58,
+      "z": -101,
+      "w": 6,
+      "d": 8,
+      "rot": 180
+    },
+    {
+      "type": "watchtower",
+      "x": -104,
+      "z": -88,
+      "w": 3
+    },
+    {
+      "type": "watchtower",
+      "x": -30,
+      "z": -90,
+      "w": 3
+    },
+    {
+      "type": "house",
+      "x": -128,
+      "z": -42,
+      "w": 7,
+      "d": 10,
+      "rot": 90,
+      "style": "log",
+      "roof": "thatch"
+    },
+    {
+      "type": "shed",
+      "x": -110,
+      "z": -43,
+      "w": 6,
+      "d": 8,
+      "rot": 180
+    },
+    {
+      "type": "logs",
+      "x": -164,
+      "z": -42,
+      "w": 6,
+      "d": 1
+    },
+    {
+      "type": "mine",
+      "x": -96,
+      "z": 190,
+      "w": 3,
+      "d": 10,
+      "rot": 0
+    },
+    {
+      "type": "mine",
+      "x": -48,
+      "z": 202,
+      "w": 3,
+      "d": 10,
+      "rot": 0
+    }
   ]
 }
