@@ -33,6 +33,10 @@
   "kcd.host.pause.state.online": "playit bridge: online",
   "kcd.host.pause.state.error": "playit bridge: error (see chat)",
 
+  "kcd.music.pack": "KCD: personal music",
+  "kcd.music.auto": "Music: automatic by situation.",
+  "kcd.music.forced": "Music: situation \"%s\".",
+
   "kcd.role.title": "Who are you?",
   "kcd.role.subtitle": "Choose who you will play in this playthrough.",
   "kcd.role.henry": "Henry",

@@ -1,8 +1,0 @@
-{
-  "music.menu": {
-    "replace": true,
-    "sounds": [
-      { "name": "kcd:music/menu_exploration", "stream": true }
-    ]
-  }
-}

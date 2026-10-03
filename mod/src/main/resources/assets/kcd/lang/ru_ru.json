@@ -33,6 +33,10 @@
   "kcd.host.pause.state.online": "Мост playit: работает",
   "kcd.host.pause.state.error": "Мост playit: ошибка (см. чат)",
 
+  "kcd.music.pack": "KCD: личная музыка",
+  "kcd.music.auto": "Музыка: автоматически по ситуации.",
+  "kcd.music.forced": "Музыка: ситуация «%s».",
+
   "kcd.role.title": "Кто ты?",
   "kcd.role.subtitle": "Выбери, за кого будешь играть в этом прохождении.",
   "kcd.role.henry": "Индржих",
