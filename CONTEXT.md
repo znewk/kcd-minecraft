@@ -9,6 +9,15 @@
 Игру без разрешения пользователя не запускать. Запуск — через TLauncher (как у сборки Homestead,
 см. `C:\Users\Arlan\AppData\Roaming\.minecraft\claude\CONTEXT.md` — там особенности TLauncher).
 
+## Окружение
+- ПК пользователя (= ориентир «средний ПК» для оптимизации): i5-10400F, GTX 1650 4 ГБ, 16 ГБ ОЗУ, Windows 11.
+  TLauncher 2.9378. Установлены (03.10.2026): JDK 21 (Temurin), Git, GitHub CLI (вход — аккаунт znewk).
+- Репозиторий: https://github.com/znewk/kcd-minecraft (приватный). Мод — папка `mod/` (NeoForge MDK,
+  mod_id `kcd`, пакет `com.znewk.kcd`); сборка: `mod\gradlew.bat build` → `mod\build\libs\kcd-*.jar`.
+- TLauncher (из опыта Homestead): модпак = версия с блоком `modpack` в `versions\<имя>\TLauncherAdditional.json`,
+  папка игры = `versions\<имя>\`; TLauncher сам качает MC, библиотеки, ассеты, Java.
+  Память — ставить в настройках самого TLauncher (он перезаписывает TLauncherAdditional.json).
+
 ## Решения, принятые на обсуждении (03.10.2026)
 - **Аудитория — только друзья**, не публичный релиз → канонический сюжет, имена, места можно использовать.
   Публиковать нельзя (IP Warhorse Studios); если пользователь захочет публиковать — переделать в «по мотивам»
