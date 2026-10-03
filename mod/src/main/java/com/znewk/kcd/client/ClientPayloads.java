@@ -1,8 +1,13 @@
 package com.znewk.kcd.client;
 
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import com.znewk.kcd.client.gui.RoleSelectScreen;
 import com.znewk.kcd.network.PartyPayloads;
@@ -16,12 +21,35 @@ public final class ClientPayloads {
     private ClientPayloads() {}
 
     public static void openRoleSelect(PartyPayloads.OpenRoleSelect payload) {
+        // автотесты: -Dkcd.autorole=henry или brother:Имя:предыстория — выбрать роль без экрана
+        String auto = System.getProperty("kcd.autorole");
+        if (auto != null && payload.error().isEmpty()) {
+            String[] p = auto.split(":");
+            boolean henry = p[0].equalsIgnoreCase("henry");
+            PacketDistributor.sendToServer(new PartyPayloads.ChooseRole(henry, p.length > 1 ? p[1] : "", p.length > 2 ? Integer.parseInt(p[2]) : 0));
+            return;
+        }
         // экран откроем, когда закроется загрузка мира (см. clientTick)
         pendingRoleSelect = payload;
     }
 
     public static void partySync(PartyPayloads.PartySync payload) {
         party = List.copyOf(payload.members());
+        // имена над головами берутся из отряда (см. onNameFormat) — обновить у всех видимых игроков
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null) mc.level.players().forEach(Player::refreshDisplayName);
+    }
+
+    /** Имя над головой на клиенте — имя персонажа из отряда. */
+    public static void onNameFormat(PlayerEvent.NameFormat event) {
+        if (!event.getEntity().level().isClientSide()) return;
+        UUID id = event.getEntity().getUUID();
+        for (Member m : party) {
+            if (m.id().equals(id)) {
+                event.setDisplayname(Component.literal(m.name()));
+                return;
+            }
+        }
     }
 
     public static List<Member> party() {

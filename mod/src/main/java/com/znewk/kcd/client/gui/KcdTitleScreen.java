@@ -8,7 +8,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
@@ -18,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.gui.ModListScreen;
 
 import com.znewk.kcd.KcdMod;
+import com.znewk.kcd.client.host.HostSession;
 
 /**
  * Главное меню в стиле KCD2: живая панорама, логотип и колонка пунктов справа,
@@ -43,6 +43,7 @@ public class KcdTitleScreen extends Screen {
 
     @Override
     protected void init() {
+        HostSession.cancelRequest();
         if (openedAt == 0L) {
             openedAt = Util.getMillis();
             tipOffset = (int) (Math.random() * TIP_COUNT);
@@ -56,7 +57,7 @@ public class KcdTitleScreen extends Screen {
         int y = logoY + logoH + 26;
         int step = 20;
         addRenderableWidget(new KcdMenuButton(columnX, y, Component.translatable("kcd.menu.party"),
-            () -> minecraft.setScreen(new JoinMultiplayerScreen(this))));
+            () -> minecraft.setScreen(new PartyMenuScreen(this))));
         addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.singleplayer"),
             () -> minecraft.setScreen(new SelectWorldScreen(this))));
         addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.options"),

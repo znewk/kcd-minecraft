@@ -1,6 +1,9 @@
 package com.znewk.kcd;
 
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -12,6 +15,8 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import com.znewk.kcd.client.ClientPayloads;
 import com.znewk.kcd.client.gui.KcdTitleScreen;
+import com.znewk.kcd.client.host.HostSession;
+import com.znewk.kcd.client.host.PlayitService;
 
 /** Клиентская часть мода (интерфейс, HUD, кат-сцены). На выделенном сервере не загружается. */
 @Mod(value = KcdMod.MODID, dist = Dist.CLIENT)
@@ -19,8 +24,16 @@ public class KcdModClient {
     public KcdModClient(IEventBus modEventBus) {
         modEventBus.addListener(KcdModClient::onClientSetup);
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenOpening);
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientPayloads.clientTick());
-        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientPayloads.reset());
+        NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenInit);
+        NeoForge.EVENT_BUS.addListener(ClientPayloads::onNameFormat);
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> {
+            ClientPayloads.clientTick();
+            HostSession.clientTick();
+        });
+        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
+            ClientPayloads.reset();
+            HostSession.onLogout();
+        });
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
@@ -32,5 +45,20 @@ public class KcdModClient {
         if (event.getNewScreen() instanceof TitleScreen) {
             event.setNewScreen(new KcdTitleScreen());
         }
+    }
+
+    /** В меню паузы у хоста — адрес для отряда (клик копирует). */
+    private static void onScreenInit(ScreenEvent.Init.Post event) {
+        if (!(event.getScreen() instanceof PauseScreen) || !HostSession.isHosting()) return;
+        String addr = PlayitService.address();
+        Component label = addr != null
+            ? Component.translatable("kcd.host.pause.address", addr)
+            : Component.translatable("kcd.host.pause.state." + PlayitService.state().name().toLowerCase());
+        event.addListener(Button.builder(label, b -> {
+            if (PlayitService.address() != null) {
+                event.getScreen().getMinecraft().keyboardHandler.setClipboard(PlayitService.address());
+                b.setMessage(Component.translatable("kcd.host.pause.copied"));
+            }
+        }).bounds(6, 6, 200, 20).build());
     }
 }
