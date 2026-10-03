@@ -8,7 +8,8 @@
   "kcd.menu.quit": "Выход",
   "kcd.menu.copyright": "Kingdom Come: Deliverance © Warhorse Studios",
 
-  "kcd.party.host": "Собрать отряд (я хост)",
+  "kcd.party.new": "Новое прохождение (я хост)",
+  "kcd.party.host": "Продолжить прохождение (я хост)",
   "kcd.party.join": "Присоединиться к отряду",
   "kcd.party.hint": "Хост открывает своё прохождение — мир сам станет доступен друзьям через интернет. Остальные присоединяются по адресу хоста.",
   "kcd.party.join.hint": "Введи адрес, который прислал хост (вида xxx.joinmc.link). Игра запомнит его.",
@@ -131,5 +132,6 @@
   "kcd.cutscene.skip": "Пробел — пропустить",
   "kcd.cutscene.skip_wait": "Пропуск: %s из %s",
   "kcd.cutscene.unknown": "Нет кат-сцены «%s».",
+  "generator.kcd.kcd": "KCD: Богемия 1403",
   "kcd.village.built": "Тестовая деревня построена. Поговори с Мартином в кузнице (ПКМ). Дневник — J."
 }

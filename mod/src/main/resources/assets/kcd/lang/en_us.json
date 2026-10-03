@@ -8,7 +8,8 @@
   "kcd.menu.quit": "Quit",
   "kcd.menu.copyright": "Kingdom Come: Deliverance © Warhorse Studios",
 
-  "kcd.party.host": "Gather a party (host)",
+  "kcd.party.new": "New playthrough (host)",
+  "kcd.party.host": "Continue playthrough (host)",
   "kcd.party.join": "Join a party",
   "kcd.party.hint": "The host opens their playthrough — the world becomes reachable for friends over the internet. Others join by the host's address.",
   "kcd.party.join.hint": "Enter the address the host sent you (like xxx.joinmc.link). The game will remember it.",
@@ -131,5 +132,6 @@
   "kcd.cutscene.skip": "Space — skip",
   "kcd.cutscene.skip_wait": "Skip: %s of %s",
   "kcd.cutscene.unknown": "No cutscene \"%s\".",
+  "generator.kcd.kcd": "KCD: Bohemia 1403",
   "kcd.village.built": "Test village built. Talk to Martin at the forge (right-click). Journal — J."
 }

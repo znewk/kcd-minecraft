@@ -19,6 +19,7 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import com.znewk.kcd.client.ClientPayloads;
 import com.znewk.kcd.client.KcdKeys;
+import com.znewk.kcd.client.NewPlaythrough;
 import com.znewk.kcd.client.quest.ClientQuests;
 import com.znewk.kcd.client.quest.CompassHud;
 import com.znewk.kcd.client.quest.QuestHud;
@@ -38,6 +39,7 @@ public class KcdModClient {
         modEventBus.addListener(MusicDirector::addPackFinders);
         modEventBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> e.registerEntityRenderer(KcdEntities.NPC.get(), KcdNpcRenderer::new));
         NeoForge.EVENT_BUS.addListener(DialogueScreen::onComputeFov);
+        NeoForge.EVENT_BUS.addListener(NewPlaythrough::onScreenInit);
         modEventBus.addListener(KcdKeys::register);
         modEventBus.addListener((RegisterGuiLayersEvent e) -> {
             e.registerAboveAll(ResourceLocation.fromNamespaceAndPath(KcdMod.MODID, "compass"), CompassHud::render);
@@ -53,6 +55,7 @@ public class KcdModClient {
             HostSession.clientTick();
             MusicDirector.tick();
             KcdKeys.clientTick();
+            NewPlaythrough.clientTick();
         });
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
             ClientPayloads.reset();

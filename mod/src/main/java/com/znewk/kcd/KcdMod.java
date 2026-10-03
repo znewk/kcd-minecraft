@@ -31,6 +31,8 @@ import com.znewk.kcd.quest.QuestRegistry;
 import com.znewk.kcd.quest.QuestService;
 import com.znewk.kcd.stats.KcdStats;
 import com.znewk.kcd.world.TestVillage;
+import com.znewk.kcd.world.gen.KcdWorldgen;
+import com.znewk.kcd.world.gen.KcdWorldRules;
 
 /** Главный класс мода KCD. Здесь подключаются все системы (отряд, диалоги, квесты, NPC...). */
 @Mod(KcdMod.MODID)
@@ -44,6 +46,7 @@ public class KcdMod {
         modEventBus.addListener(KcdEntities::onAttributes);
         KcdEntities.ENTITIES.register(modEventBus);
         KcdStats.ATTACHMENTS.register(modEventBus);
+        KcdWorldgen.GENERATORS.register(modEventBus);
 
         NeoForge.EVENT_BUS.addListener(this::onServerStarting);
         NeoForge.EVENT_BUS.addListener(PartyService::onLogin);
@@ -64,6 +67,8 @@ public class KcdMod {
         NeoForge.EVENT_BUS.addListener(CutsceneService::onDamage);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> CutsceneService.registerCommands(e.getDispatcher()));
         NeoForge.EVENT_BUS.addListener(AuthService::onLogin);
+        NeoForge.EVENT_BUS.addListener(KcdWorldRules::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(KcdWorldRules::onLogin);
         NeoForge.EVENT_BUS.addListener(AuthService::onLogout);
         NeoForge.EVENT_BUS.addListener(AuthService::onServerTick);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> AuthService.registerCommands(e.getDispatcher()));

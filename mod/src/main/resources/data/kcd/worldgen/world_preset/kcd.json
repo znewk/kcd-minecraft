@@ -1,0 +1,11 @@
+{
+  "dimensions": {
+    "minecraft:overworld": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "kcd:map",
+        "biome_source": { "type": "minecraft:fixed", "biome": "minecraft:plains" }
+      }
+    }
+  }
+}

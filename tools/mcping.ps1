@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$HostName, [int]$Port = 0, [int]$TimeoutSec = 10)
+﻿param([Parameter(Mandatory)][string]$HostName, [int]$Port = 0, [int]$TimeoutSec = 10)
 # Пинг сервера Minecraft как из списка серверов (handshake + status). Без порта — берёт SRV-запись, как игра.
 # Пример: tools\mcping.ps1 stamina-coupe.tun.ply.gg
 $target = $HostName

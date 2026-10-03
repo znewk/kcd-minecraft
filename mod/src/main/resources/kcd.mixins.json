@@ -3,7 +3,12 @@
   "minVersion": "0.8",
   "package": "com.znewk.kcd.mixin",
   "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ConfirmedWarningMixin"
+  ],
   "client": [
+    "CreateWorldScreenInvoker",
+    "ExperimentalWarningMixin",
     "MinecraftMixin"
   ],
   "injectors": {

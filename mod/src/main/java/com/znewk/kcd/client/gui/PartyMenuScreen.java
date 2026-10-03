@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
 
+import com.znewk.kcd.client.NewPlaythrough;
 import com.znewk.kcd.client.host.HostSession;
 
 /** «Играть с отрядом»: собрать свой отряд (хост) или присоединиться к другу. */
@@ -19,13 +20,14 @@ public class PartyMenuScreen extends Screen {
     @Override
     protected void init() {
         int cx = width / 2, y = height / 2 - 10;
-        addRenderableWidget(new KcdMenuButton(cx, y, Component.translatable("kcd.party.host"), () -> {
+        addRenderableWidget(new KcdMenuButton(cx, y, Component.translatable("kcd.party.new"), () -> NewPlaythrough.start(true)));
+        addRenderableWidget(new KcdMenuButton(cx, y + 20, Component.translatable("kcd.party.host"), () -> {
             HostSession.requestHost();
             minecraft.setScreen(new SelectWorldScreen(this));
         }));
-        addRenderableWidget(new KcdMenuButton(cx, y + 20, Component.translatable("kcd.party.join"),
+        addRenderableWidget(new KcdMenuButton(cx, y + 40, Component.translatable("kcd.party.join"),
             () -> minecraft.setScreen(new PartyJoinScreen(this))));
-        addRenderableWidget(new KcdMenuButton(cx, y + 56, Component.translatable("gui.back"), this::onClose));
+        addRenderableWidget(new KcdMenuButton(cx, y + 76, Component.translatable("gui.back"), this::onClose));
     }
 
     @Override
