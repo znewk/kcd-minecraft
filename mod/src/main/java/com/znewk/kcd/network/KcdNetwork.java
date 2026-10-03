@@ -5,12 +5,13 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import com.znewk.kcd.client.ClientPayloads;
+import com.znewk.kcd.client.quest.ClientQuests;
 import com.znewk.kcd.dialogue.DialogueService;
 import com.znewk.kcd.party.PartyService;
 
 /** Регистрация всех пакетов мода. Клиентские обработчики вызываются только на клиенте. */
 public final class KcdNetwork {
-    public static final String VERSION = "1";
+    public static final String VERSION = "2";
 
     private KcdNetwork() {}
 
@@ -31,5 +32,8 @@ public final class KcdNetwork {
             (p, ctx) -> DialogueService.choose((ServerPlayer) ctx.player(), p.npcId(), p.option()));
         r.playToServer(DialoguePayloads.Leave.TYPE, DialoguePayloads.Leave.CODEC,
             (p, ctx) -> DialogueService.leave((ServerPlayer) ctx.player(), p.npcId()));
+
+        r.playToClient(QuestPayloads.Sync.TYPE, QuestPayloads.Sync.CODEC, (p, ctx) -> ClientQuests.sync(p));
+        r.playToClient(QuestPayloads.Notice.TYPE, QuestPayloads.Notice.CODEC, (p, ctx) -> ClientQuests.notice(p));
     }
 }

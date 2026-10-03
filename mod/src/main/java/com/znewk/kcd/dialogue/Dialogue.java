@@ -30,8 +30,10 @@ import com.znewk.kcd.stats.KcdStats;
  *         {"text": "Ответ с проверкой", "check": "persuasion:3", "success": "ok", "fail": "no"},
  *         {"text": "Один раз", "once": true, "if": ["!flag:x"], "do": ["flag:x", "rep:+2"], "next": "end"} ] } } }
  * </pre>
- * Условия (if): flag:X, memory:X, role:henry|brother, rep:N (не ниже), stat:speech:N; «!» в начале — отрицание.
- * Действия (do): flag:X, unflag:X, remember:X, forget:X, rep:+N, stat:speech:+N, give:minecraft:bread*2.
+ * Условия (if): flag:X, memory:X, role:henry|brother, rep:N (не ниже), stat:speech:N, quest:Q (задание идёт),
+ * done:Q (выполнено), objective:Q:цель, has:minecraft:charcoal*10 (у говорящего есть); «!» в начале — отрицание.
+ * Действия (do): flag:X, unflag:X, remember:X, forget:X, rep:+N, stat:speech:+N, give:minecraft:bread*2,
+ * take:minecraft:charcoal*10, quest:Q (выдать задание), objective:Q:цель, diary:Q:запись, complete:Q, fail:Q.
  * «story»: в этом месте решает Индржих (если он рядом). Узел без вариантов — в конце «Уйти».
  */
 public record Dialogue(ResourceLocation id, List<Start> start, Map<String, Node> nodes) {
@@ -50,8 +52,9 @@ public record Dialogue(ResourceLocation id, List<Start> start, Map<String, Node>
 
     public record Effect(String type, String arg) {}
 
-    private static final Set<String> COND_TYPES = Set.of("flag", "memory", "role", "rep", "stat");
-    private static final Set<String> EFFECT_TYPES = Set.of("flag", "unflag", "remember", "forget", "rep", "stat", "give");
+    private static final Set<String> COND_TYPES = Set.of("flag", "memory", "role", "rep", "stat", "quest", "done", "objective", "has");
+    private static final Set<String> EFFECT_TYPES = Set.of("flag", "unflag", "remember", "forget", "rep", "stat", "give", "take",
+        "quest", "objective", "diary", "complete", "fail");
 
     static Dialogue parse(ResourceLocation id, JsonObject o) {
         List<Start> start = new ArrayList<>();

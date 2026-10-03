@@ -4,6 +4,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -11,11 +12,15 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import com.znewk.kcd.client.ClientPayloads;
+import com.znewk.kcd.client.KcdKeys;
+import com.znewk.kcd.client.quest.ClientQuests;
+import com.znewk.kcd.client.quest.QuestHud;
 import com.znewk.kcd.client.gui.DialogueScreen;
 import com.znewk.kcd.client.gui.KcdTitleScreen;
 import com.znewk.kcd.client.host.HostSession;
@@ -32,6 +37,8 @@ public class KcdModClient {
         modEventBus.addListener(MusicDirector::addPackFinders);
         modEventBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> e.registerEntityRenderer(KcdEntities.NPC.get(), KcdNpcRenderer::new));
         NeoForge.EVENT_BUS.addListener(DialogueScreen::onComputeFov);
+        modEventBus.addListener(KcdKeys::register);
+        modEventBus.addListener((RegisterGuiLayersEvent e) -> e.registerAboveAll(ResourceLocation.fromNamespaceAndPath(KcdMod.MODID, "quests"), QuestHud::render));
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenOpening);
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenInit);
         NeoForge.EVENT_BUS.addListener(ClientPayloads::onNameFormat);
@@ -41,11 +48,13 @@ public class KcdModClient {
             ClientPayloads.clientTick();
             HostSession.clientTick();
             MusicDirector.tick();
+            KcdKeys.clientTick();
         });
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
             ClientPayloads.reset();
             HostSession.onLogout();
             MusicDirector.reset();
+            ClientQuests.reset();
         });
     }
 

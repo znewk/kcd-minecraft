@@ -31,6 +31,7 @@ import com.znewk.kcd.npc.NpcRegistry;
 import com.znewk.kcd.party.Member;
 import com.znewk.kcd.party.PartyData;
 import com.znewk.kcd.party.Role;
+import com.znewk.kcd.quest.QuestService;
 import com.znewk.kcd.stats.KcdStats;
 import com.znewk.kcd.story.StoryFlags;
 
@@ -275,6 +276,16 @@ public final class DialogueService {
                 String[] s = c.arg().split(":");
                 yield KcdStats.get(player, s[0]) >= Integer.parseInt(s[1]);
             }
+            case "quest" -> QuestService.isActive(server, c.arg());
+            case "done" -> QuestService.isDone(server, c.arg());
+            case "objective" -> {
+                String[] s = c.arg().split(":");
+                yield QuestService.objectiveDone(server, s[0], s[1]);
+            }
+            case "has" -> {
+                ItemStack want = stack(c.arg());
+                yield player.getInventory().countItem(want.getItem()) >= want.getCount();
+            }
             default -> false;
         };
     }
@@ -294,6 +305,18 @@ public final class DialogueService {
                         KcdStats.set(player, s[0], KcdStats.get(player, s[0]) + Integer.parseInt(s[1].replace("+", "")));
                     }
                     case "give" -> give(player, e.arg());
+                    case "take" -> take(player, e.arg());
+                    case "quest" -> QuestService.start(server, e.arg());
+                    case "objective" -> {
+                        String[] s = e.arg().split(":");
+                        QuestService.objective(server, s[0], s[1]);
+                    }
+                    case "diary" -> {
+                        String[] s = e.arg().split(":");
+                        QuestService.diary(server, s[0], s[1]);
+                    }
+                    case "complete" -> QuestService.finish(server, e.arg(), true);
+                    case "fail" -> QuestService.finish(server, e.arg(), false);
                     default -> { }
                 }
             } catch (RuntimeException ex) {
@@ -302,12 +325,27 @@ public final class DialogueService {
         }
     }
 
-    private static void give(ServerPlayer player, String arg) {
+    /** "minecraft:charcoal*10" → стопка (количество может быть больше размера стопки). */
+    private static ItemStack stack(String arg) {
         int star = arg.lastIndexOf('*');
         int count = star < 0 ? 1 : Integer.parseInt(arg.substring(star + 1));
         ResourceLocation id = ResourceLocation.parse(star < 0 ? arg : arg.substring(0, star));
-        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(id), count);
-        if (!player.getInventory().add(stack)) player.drop(stack, false);
+        return new ItemStack(BuiltInRegistries.ITEM.get(id), count);
+    }
+
+    private static void give(ServerPlayer player, String arg) {
+        ItemStack want = stack(arg);
+        int left = want.getCount();
+        while (left > 0) {
+            ItemStack s = want.copyWithCount(Math.min(left, want.getMaxStackSize()));
+            left -= s.getCount();
+            if (!player.getInventory().add(s)) player.drop(s, false);
+        }
+    }
+
+    private static void take(ServerPlayer player, String arg) {
+        ItemStack want = stack(arg);
+        player.getInventory().clearOrCountMatchingItems(s -> s.is(want.getItem()), want.getCount(), player.inventoryMenu.getCraftSlots());
     }
 
     // ------------------------------------------------------------------ зрители и рассылка

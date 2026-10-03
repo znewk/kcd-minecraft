@@ -24,7 +24,10 @@ import com.znewk.kcd.npc.KcdEntities;
 import com.znewk.kcd.npc.NpcCommands;
 import com.znewk.kcd.npc.NpcRegistry;
 import com.znewk.kcd.party.PartyService;
+import com.znewk.kcd.quest.QuestRegistry;
+import com.znewk.kcd.quest.QuestService;
 import com.znewk.kcd.stats.KcdStats;
+import com.znewk.kcd.world.TestVillage;
 
 /** Главный класс мода KCD. Здесь подключаются все системы (отряд, диалоги, квесты, NPC...). */
 @Mod(KcdMod.MODID)
@@ -48,8 +51,12 @@ public class KcdMod {
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent e) -> {
             e.addListener(new NpcRegistry());
             e.addListener(new DialogueRegistry());
+            e.addListener(new QuestRegistry());
         });
         NeoForge.EVENT_BUS.addListener(DialogueService::onServerTick);
+        NeoForge.EVENT_BUS.addListener(QuestService::onLogin);
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> QuestService.registerCommands(e.getDispatcher()));
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> TestVillage.registerCommands(e.getDispatcher()));
     }
 
     private static String version;

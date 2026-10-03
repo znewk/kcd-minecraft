@@ -15,6 +15,8 @@ public class GenSkins {
         ASSETS = args.length > 0 ? args[0] : "mod/src/main/resources/assets";
         save(martin(), "kcd/textures/entity/npc/martin.png");
         save(peasant(), "kcd/textures/entity/npc/peasant.png");
+        save(guard(), "kcd/textures/entity/npc/guard.png");
+        save(charcoalBurner(), "kcd/textures/entity/npc/charcoal_burner.png");
         System.out.println("Готово: " + ASSETS);
     }
 
@@ -176,6 +178,31 @@ public class GenSkins {
         return draw(new Look(0xFFC69878, 0xFF4A3628, 0xFF5A4636, 0xFF3A2A1A,
             0xFFCDBF9F, 0xFFCDBF9F, 0xFF6B4A2E, 0xFF2E2016,
             0xFF4A3B2E, 0xFF2E2219, 0, true), 1403);
+    }
+
+    /** Стражник Скалицы: красная стёганка, кольчужный капюшон, тёмные шоссы, сапоги. */
+    static BufferedImage guard() {
+        BufferedImage img = draw(new Look(0xFFC09070, 0xFF3A2A1E, 0xFF4A3A2A, 0xFF2A3A4A,
+            0xFF9A2A22, 0xFF9A2A22, 0, 0xFF2A1E14,
+            0xFF3A3430, 0xFF2A2018, 0xFF8A8C90, false), 1405);
+        // кольчуга на капюшоне — чередование светлых и тёмных колец
+        for (int y = 0; y < 16; y++) for (int x = 32; x < 64; x++) {
+            int c = img.getRGB(x, y);
+            if ((c >>> 24) != 0 && ((x + y) & 1) == 0) img.setRGB(x, y, shade(c, 0.72));
+        }
+        // стёжка стёганки — тёмные горизонтальные швы через ряд
+        for (int y = 20; y < 32; y += 2) for (int x = 16; x < 40; x++) {
+            int c = img.getRGB(x, y);
+            if ((c >>> 24) != 0 && c != 0) img.setRGB(x, y, shade(c, 0.85));
+        }
+        return img;
+    }
+
+    /** Угольщик: закопчённое лицо и одежда, тёмный капюшон. */
+    static BufferedImage charcoalBurner() {
+        return draw(new Look(0xFF8E6E58, 0xFF2A2420, 0xFF2E2824, 0xFF4A3A2A,
+            0xFF5A5248, 0xFF4A4038, 0xFF3A3028, 0xFF1E1812,
+            0xFF3A322A, 0xFF1E1A16, 0xFF2E2A26, true), 1406);
     }
 
     /** Сельчанин: шерстяная туника цвета глины, суконный капюшон, обмотки. */

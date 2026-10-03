@@ -1,0 +1,50 @@
+{
+  "start": [
+    { "node": "crossguard", "if": ["quest:radzig_sword", "!objective:radzig_sword:crossguard"] },
+    { "node": "idle" }
+  ],
+  "nodes": {
+    "idle": {
+      "text": "Проходи, проходи. Нечего у ворот толпиться.",
+      "options": [
+        { "text": "Что нового в замке?", "once": true, "next": "news" },
+        { "text": "Ухожу.", "next": "end" }
+      ]
+    },
+    "news": {
+      "text": "Пан Радциг который день не в духе. Из Тальмберга вести дурные — то ли разбойники, то ли похуже. Нашему брату-стражнику не докладывают.",
+      "options": [
+        { "text": "Ну, бывай, Ярослав.", "next": "end" }
+      ]
+    },
+    "crossguard": {
+      "text": "Чего тебе, {name}? Ты ж кузнецов сын, верно?",
+      "options": [
+        { "text": "Отец прислал за крестовиной для меча пана Радцига.", "next": "give" },
+        { "text": "Давай сюда крестовину, живо! Отец ждёт.",
+          "check": "intimidate:5", "success": "intim_ok", "fail": "intim_fail" }
+      ]
+    },
+    "give": {
+      "text": "А, это. Держи — и крестовина, и навершие, всё в тряпице. Кунеш тут крутился, хотел глянуть, да я не дал. Скажи Мартину: работа знатная.",
+      "do": ["objective:radzig_sword:crossguard", "diary:radzig_sword:crossguard", "rep:+2"],
+      "options": [
+        { "text": "Спасибо, Ярослав.", "next": "end" }
+      ]
+    },
+    "intim_ok": {
+      "text": "Ишь ты, грозный какой стал! Ладно, ладно, держи свою крестовину. Только не ори так у ворот — пан услышит.",
+      "do": ["objective:radzig_sword:crossguard", "diary:radzig_sword:crossguard", "rep:-2"],
+      "options": [
+        { "text": "Так-то лучше.", "next": "end" }
+      ]
+    },
+    "intim_fail": {
+      "text": "Ты на кого голос поднял, щенок? Ещё раз так — в колодках посидишь.",
+      "do": ["rep:-5"],
+      "options": [
+        { "text": "Прости... Отец прислал за крестовиной.", "next": "give" }
+      ]
+    }
+  }
+}

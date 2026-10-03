@@ -7,11 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 
 import com.znewk.kcd.KcdMod;
+import com.znewk.kcd.client.quest.JournalScreen;
 
 /**
  * Автотесты без мыши: {@code -Dkcd.autocmd="time set noon;~5;kcd npc talk;~3;!shot"} — после входа в мир
  * выполняет команды по одной в секунду; {@code ~N} — пауза N секунд, {@code !shot} — снимок экрана
- * в {@code <игра>/screenshots/kcd-auto-<n>.png}. В обычной игре свойство не задано и класс ничего не делает.
+ * в {@code <игра>/screenshots/kcd-auto-<n>.png}, {@code !journal} — открыть дневник. В обычной игре свойство не задано и класс ничего не делает.
  */
 public final class AutoTest {
     private static final Deque<String> QUEUE = new ArrayDeque<>();
@@ -36,6 +37,9 @@ public final class AutoTest {
             int n = ++shots;
             Screenshot.grab(mc.gameDirectory, "kcd-auto-" + n + ".png", mc.getMainRenderTarget(),
                 msg -> KcdMod.LOGGER.info("KCD: снимок {}", n));
+            wait = 1;
+        } else if (step.equals("!journal")) {
+            mc.setScreen(new JournalScreen());
             wait = 1;
         } else {
             mc.player.connection.sendCommand(step);

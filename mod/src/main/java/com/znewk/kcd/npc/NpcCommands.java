@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
+import com.znewk.kcd.KcdPerms;
 import com.znewk.kcd.dialogue.DialogueService;
 import com.znewk.kcd.stats.KcdStats;
 import com.znewk.kcd.story.StoryFlags;
@@ -34,7 +35,7 @@ public final class NpcCommands {
     public static void register(CommandDispatcher<CommandSourceStack> d) {
         // "kcd" сливается с командами отряда, поэтому права — на каждой ветке
         d.register(Commands.literal("kcd")
-            .then(Commands.literal("npc").requires(s -> s.hasPermission(2))
+            .then(Commands.literal("npc").requires(KcdPerms::host)
                 .then(Commands.literal("spawn")
                     .then(Commands.argument("id", ResourceLocationArgument.id())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggestResource(NpcRegistry.ids(), b))
@@ -43,7 +44,7 @@ public final class NpcCommands {
                 .then(Commands.literal("talk").executes(NpcCommands::talk))
                 .then(Commands.literal("forget")
                     .then(Commands.argument("players", EntityArgument.players()).executes(NpcCommands::forget))))
-            .then(Commands.literal("flag").requires(s -> s.hasPermission(2))
+            .then(Commands.literal("flag").requires(KcdPerms::host)
                 .then(Commands.literal("list").executes(NpcCommands::flagList))
                 .then(Commands.literal("set")
                     .then(Commands.argument("flag", StringArgumentType.word()).executes(ctx -> flag(ctx, true))))
@@ -51,7 +52,7 @@ public final class NpcCommands {
                     .then(Commands.argument("flag", StringArgumentType.word())
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(StoryFlags.get(ctx.getSource().getServer()).all(), b))
                         .executes(ctx -> flag(ctx, false)))))
-            .then(Commands.literal("stat").requires(s -> s.hasPermission(2))
+            .then(Commands.literal("stat").requires(KcdPerms::host)
                 .then(Commands.argument("players", EntityArgument.players())
                     .executes(NpcCommands::statShow)
                     .then(Commands.argument("stat", StringArgumentType.word())

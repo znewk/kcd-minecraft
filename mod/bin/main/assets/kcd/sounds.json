@@ -1,0 +1,37 @@
+{
+  "mood.menu": {
+    "sounds": [
+      { "name": "kcd:music/menu_exploration", "stream": true }
+    ]
+  },
+  "mood.explore_day": {
+    "sounds": [
+      { "name": "kcd:music/village_harvest_season", "stream": true }
+    ]
+  },
+  "mood.village": {
+    "sounds": [
+      { "name": "kcd:music/village_harvest_season", "stream": true }
+    ]
+  },
+  "mood.town": {
+    "sounds": [
+      { "name": "kcd:music/town_market_day", "stream": true }
+    ]
+  },
+  "mood.tavern": {
+    "sounds": [
+      { "name": "kcd:music/tavern_old_tower_inn", "stream": true },
+      { "name": "kcd:music/tavern_minstrel_dance", "stream": true }
+    ]
+  },
+  "mood.explore_night": { "sounds": [] },
+  "mood.church": { "sounds": [] },
+  "mood.camp": { "sounds": [] },
+  "mood.tension": { "sounds": [] },
+  "mood.combat": { "sounds": [] },
+  "mood.fistfight": { "sounds": [] },
+  "mood.chase": { "sounds": [] },
+  "mood.victory": { "sounds": [] },
+  "mood.cutscene": { "sounds": [] }
+}
