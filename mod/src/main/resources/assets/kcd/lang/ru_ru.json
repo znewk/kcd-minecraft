@@ -26,6 +26,7 @@
   "kcd.host.copy": "Нажми, чтобы скопировать",
   "kcd.host.pause.address": "Адрес отряда: %s",
   "kcd.host.pause.copied": "Адрес скопирован!",
+  "kcd.host.pause.open": "Открыть для отряда (интернет)",
   "kcd.host.pause.state.idle": "Мост playit: выключен",
   "kcd.host.pause.state.downloading": "Мост playit: скачиваю…",
   "kcd.host.pause.state.claiming": "Мост playit: ждёт привязки",

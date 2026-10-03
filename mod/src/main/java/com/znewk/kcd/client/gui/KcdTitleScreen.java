@@ -43,7 +43,7 @@ public class KcdTitleScreen extends Screen {
 
     @Override
     protected void init() {
-        HostSession.cancelRequest();
+        // запрос «я хост» здесь не сбрасываем: при создании нового мира игра на миг открывает главное меню
         if (openedAt == 0L) {
             openedAt = Util.getMillis();
             tipOffset = (int) (Math.random() * TIP_COUNT);
@@ -58,8 +58,10 @@ public class KcdTitleScreen extends Screen {
         int step = 20;
         addRenderableWidget(new KcdMenuButton(columnX, y, Component.translatable("kcd.menu.party"),
             () -> minecraft.setScreen(new PartyMenuScreen(this))));
-        addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.singleplayer"),
-            () -> minecraft.setScreen(new SelectWorldScreen(this))));
+        addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.singleplayer"), () -> {
+            HostSession.cancelRequest();
+            minecraft.setScreen(new SelectWorldScreen(this));
+        }));
         addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.options"),
             () -> minecraft.setScreen(new OptionsScreen(this, minecraft.options))));
         addRenderableWidget(new KcdMenuButton(columnX, y += step, Component.translatable("kcd.menu.mods"),

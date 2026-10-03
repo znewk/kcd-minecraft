@@ -26,6 +26,7 @@
   "kcd.host.copy": "Click to copy",
   "kcd.host.pause.address": "Party address: %s",
   "kcd.host.pause.copied": "Address copied!",
+  "kcd.host.pause.open": "Open for party (internet)",
   "kcd.host.pause.state.idle": "playit bridge: off",
   "kcd.host.pause.state.downloading": "playit bridge: downloading…",
   "kcd.host.pause.state.claiming": "playit bridge: waiting for link",

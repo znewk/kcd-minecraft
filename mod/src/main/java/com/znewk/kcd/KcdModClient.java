@@ -69,9 +69,22 @@ public class KcdModClient {
         }
     }
 
-    /** В меню паузы у хоста — адрес для отряда (клик копирует). */
+    /**
+     * В меню паузы: у хоста — адрес для отряда (клик копирует); в одиночном мире, ещё не открытом для сети, —
+     * кнопка «Открыть для отряда» (наш хост с playit вместо ванильного «Открыть для сети»).
+     */
     private static void onScreenInit(ScreenEvent.Init.Post event) {
-        if (!(event.getScreen() instanceof PauseScreen) || !HostSession.isHosting()) return;
+        if (!(event.getScreen() instanceof PauseScreen)) return;
+        var mc = event.getScreen().getMinecraft();
+        if (!HostSession.isHosting()) {
+            if (mc.getSingleplayerServer() != null && !mc.getSingleplayerServer().isPublished()) {
+                event.addListener(Button.builder(Component.translatable("kcd.host.pause.open"), b -> {
+                    HostSession.requestHost();
+                    mc.setScreen(null);
+                }).bounds(6, 6, 200, 20).build());
+            }
+            return;
+        }
         String addr = PlayitService.address();
         Component label = addr != null
             ? Component.translatable("kcd.host.pause.address", addr)
