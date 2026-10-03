@@ -346,13 +346,30 @@
   (0,0) — рынок Скалицы), посевы, деревья/трава по покрытию, без пещер/руд/мобов. Режим приключения (`KcdWorldRules`).
 - Карту рисует `tools/map/GenMap.java` (`tools/map/genmap.ps1`) из `tools/map/skalitz.json` (холмы, ручьи с уровнем
   по течению, пруды, области покрытия, дороги со сглаживанием) + площадки под постройками → превью `tools/map/out/map.png`.
-- Постройки — `kcdmap/buildings.json` (type, x, z, w, d, rot, стиль…), строители `world/gen/BuildingKit` (house
-  timber/log/plaster/stone, forge, tavern, keep, hall, gatehouse, wall, palisade, stall, pillory, well, mill, barn,
-  shed, pen, mine, cart, hay, tables, fence, tree); все собираются в память и ставятся по чанкам при генерации.
+- Постройки — `kcdmap/buildings.json` (type, x, z, w, d, rot, style, roof…), строители `world/gen/BuildingKit`
+  в стиле скриншотов KCD: house (style whitewash/pink/log/timber/stone; roof thatch/shingle/slate; floors),
+  очень крутые крыши (2 вверх на 1 внутрь), фронтоны из тёмных досок с продухом, маленькие тёмные окошки;
+  forge (открытый навес, горн), tavern, palace, tower (круглый бергфрид с конусом и галереей), gatehouse
+  stone/wood (блокгауз с шатром), watchtower, wall (куртина), logwall (бревенчатая ограда), palisade, stall,
+  pillory, well, mill, barn, shed, pen (training/sheep), mine, cart, hay, logs, tables, fence, tree (большой дуб);
+  `npc` — житель встаёт на место при первой загрузке (`WorldNpcs`, data/kcd_world_npcs.dat).
+  Порядок в плане важен: ворота после частокола (прорезают проём). Масштабирование плана — `tools/map/ScaleLayout.java`.
+- GenMap: на склонах ≥1.6 м/м покрытие становится скалой (выходы камня), площадки под постройками ровняются.
 - «Новое прохождение (я хост)» в меню отряда — мир KCD в один клик (`client/NewPlaythrough`, mixin-invoker);
   предупреждение об экспериментальных настройках отключено (mixins). Автотест: `-Dkcd.autonew=true`.
-- Сейчас в плане ЧЕРНОВАЯ Скалица; точный план — `docs/research-skalitz-layout.md` (исследование).
-Дальше: Скалица по плану, жители по местам (распорядок), регионы → музыка деревни/корчмы.
+- **Скалица по карте KCD1 (03.10.2026):** источник — карта game-maps.com с сеткой в метрах
+  (`%TEMP%\kcd-skalitz\gm-grid.png`, может быть удалена — перекачать с game-maps.com «Skalitz Map»), сжата ×0.8.
+  Замок (−130, 20) на холме +26 м, частокол деревни, рынок (−16, 6), корчма (11, 5), дом Индржиха/кузница (−46, 62)/(−32, 74),
+  река по z≈150–170, мельница/двор рудообработки за рекой, хутор у ЮВ ворот. Квест Мартина работает в Скалице.
+- **Визуальные референсы** (НЕ в репозитории — чужие картинки): `C:\Users\Arlan\Documents\KCD-ref\skalitz\`
+  (107 скриншотов + `INDEX.md` с описаниями и «Стилем Скалицы»), видео `KCD-ref\video\skalitz_normal_day_*.webm`.
+  Сверять постройки со скриншотами, снимать нашу версию с тех же ракурсов.
+- Пользователь: «вообще не похоже» на черновик → переделано по карте и скриншотам; ждёт его оценки.
+**Дальше по M2:** довести ключевые здания по их скриншотам (корчма с венком и погребом, дом Индржиха с липой,
+дом Немца, палас/двор замка, ворота замковой ограды), солома менее жёлтая, проверить масштаб по видео
+(расстояния, размеры домов), больше деревьев/рельефа вокруг, интерьеры; регионы (деревня/корчма/замок) → музыка;
+распорядок дня жителей. Свободная музыка: помощник качал треки в `%TEMP%\kcd-free-music\` (Kevin MacLeod CC BY 4.0,
+RandomMind CC0) — разобрать, перекодировать в ogg, вшить по ситуациям, дописать CREDITS.md.
 **Как тестировать:** `tools/testlaunch.ps1` (один клиент; -Single мир, -Join адрес, -Shot снимок),
 `tools/cooptest.ps1` (хост + «друг» на localhost, роли выбираются сами: -Dkcd.autorole; -HostExtra/-FriendExtra).
 Автотест без мыши (`client/AutoTest`): `-Dkcd.autocmd="kcd npc spawn kcd:martin;kcd npc talk;~3;!shot"`
