@@ -7,6 +7,7 @@ import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -21,6 +22,16 @@ public class KcdMod {
     public KcdMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    public static String version() {
+        return ModList.get().getModContainerById(MODID)
+            .map(c -> c.getModInfo().getVersion().toString())
+            .orElse("?");
+    }
+
+    public static String windowTitle() {
+        return "KCD by znewk · v" + version();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
