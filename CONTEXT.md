@@ -283,3 +283,9 @@
   «Присоединиться к отряду» — ввод адреса, запоминается в `kcd/last_server.txt`.
   Проверено на 2 клиентах локально (`tools/cooptest.ps1`); мост playit через интернет — ждёт теста пользователя.
   Выделенный сервер (`server/`, .bat) остаётся запасным вариантом.
+- **Музыка (03.10.2026):** `client/music/MusicDirector` — ванильная музыка выключена; ситуации `kcd:mood.*`
+  (menu, explore_day/night, village, town, tavern, church, camp, tension, combat, fistfight, chase, victory,
+  cutscene); авто: бой/опасность/день/ночь/меню; остальные — позже регионами/кат-сценами, сейчас `/kcdmusic <mood|auto>`.
+  Свободные треки — в моде. Личная музыка игрока — пакет `<игра>/kcd/music_pack` (собирает
+  `tools/import-music.ps1` по таблице `tools/music-map.json`), подменяет свободные. Файлы OST KCD2 у
+  пользователя (теги: Jan Valta / Adam Sporka, «OST Essentials») — в сборку/GitHub/архив НЕ кладём.
