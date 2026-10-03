@@ -10,15 +10,19 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import com.znewk.kcd.client.ClientPayloads;
+import com.znewk.kcd.client.gui.DialogueScreen;
 import com.znewk.kcd.client.gui.KcdTitleScreen;
 import com.znewk.kcd.client.host.HostSession;
 import com.znewk.kcd.client.host.PlayitService;
 import com.znewk.kcd.client.music.MusicDirector;
+import com.znewk.kcd.client.npc.KcdNpcRenderer;
+import com.znewk.kcd.npc.KcdEntities;
 
 /** Клиентская часть мода (интерфейс, HUD, кат-сцены). На выделенном сервере не загружается. */
 @Mod(value = KcdMod.MODID, dist = Dist.CLIENT)
@@ -26,6 +30,8 @@ public class KcdModClient {
     public KcdModClient(IEventBus modEventBus) {
         modEventBus.addListener(KcdModClient::onClientSetup);
         modEventBus.addListener(MusicDirector::addPackFinders);
+        modEventBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> e.registerEntityRenderer(KcdEntities.NPC.get(), KcdNpcRenderer::new));
+        NeoForge.EVENT_BUS.addListener(DialogueScreen::onComputeFov);
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenOpening);
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenInit);
         NeoForge.EVENT_BUS.addListener(ClientPayloads::onNameFormat);

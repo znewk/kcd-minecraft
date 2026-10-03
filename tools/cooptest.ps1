@@ -1,4 +1,5 @@
-﻿param([string]$World = 'kcdtest', [string]$FriendRole = 'brother:Вашек:1', [int]$HoldSec = 25)
+﻿param([string]$World = 'kcdtest', [string]$FriendRole = 'brother:Вашек:1', [int]$HoldSec = 25,
+      [string[]]$HostExtra = @(), [string[]]$FriendExtra = @())
 # Кооп-тест на одном ПК: хост открывает мир для отряда (без playit), «друг» заходит на localhost:25565.
 # Снимки: %TEMP%\kcd-coop-host.png, %TEMP%\kcd-coop-friend.png. Итог — в конце вывода.
 $t = "$PSScriptRoot\testlaunch.ps1"
@@ -6,14 +7,14 @@ $hostLog = "$env:APPDATA\.minecraft\versions\KCD\logs\latest.log"
 $friendDir = "$env:TEMP\kcd-client2"
 $friendLog = "$friendDir\logs\latest.log"
 
-$h = & $t -Single $World -JvmExtra '-Dkcd.autohost=true', '-Dkcd.playit=false', '-Dkcd.autorole=henry' `
+$h = & $t -Single $World -JvmExtra (@('-Dkcd.autohost=true', '-Dkcd.playit=false', '-Dkcd.autorole=henry') + $HostExtra) `
     -ReadyPattern 'Started serving on 25565' -NoKill -WaitSec 300 -Xmx 3G
 $h
 $hostPid = ($h | Where-Object { $_ -like 'PID:*' }) -replace 'PID: ', ''
 if (-not $hostPid) { 'HOST FAILED'; return }
 
 $f = & $t -GameDir $friendDir -User 'Friend' -Uuid '11111111-2222-3333-4444-555555555555' -Join 'localhost:25565' `
-    -ServerLog $hostLog -JvmExtra "-Dkcd.autorole=$FriendRole" -Shot "$env:TEMP\kcd-coop-friend.png" -ShotDelay 12 -NoKill -WaitSec 300 -Xmx 3G
+    -ServerLog $hostLog -JvmExtra (@("-Dkcd.autorole=$FriendRole") + $FriendExtra) -Shot "$env:TEMP\kcd-coop-friend.png" -ShotDelay 12 -NoKill -WaitSec 300 -Xmx 3G
 $f
 $friendPid = ($f | Where-Object { $_ -like 'PID:*' }) -replace 'PID: ', ''
 

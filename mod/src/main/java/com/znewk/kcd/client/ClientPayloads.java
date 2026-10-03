@@ -9,7 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import com.znewk.kcd.client.gui.DialogueScreen;
 import com.znewk.kcd.client.gui.RoleSelectScreen;
+import com.znewk.kcd.network.DialoguePayloads;
 import com.znewk.kcd.network.PartyPayloads;
 import com.znewk.kcd.party.Member;
 
@@ -52,12 +54,23 @@ public final class ClientPayloads {
         }
     }
 
+    public static void dialogueView(DialoguePayloads.View view) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.screen instanceof DialogueScreen ds && ds.npcId() == view.npcId()) ds.update(view);
+        else mc.setScreen(new DialogueScreen(view));
+    }
+
+    public static void dialogueClose(DialoguePayloads.Close close) {
+        if (Minecraft.getInstance().screen instanceof DialogueScreen ds && ds.npcId() == close.npcId()) ds.closeFromServer();
+    }
+
     public static List<Member> party() {
         return party;
     }
 
     public static void clientTick() {
         Minecraft mc = Minecraft.getInstance();
+        AutoTest.clientTick();
         if (pendingRoleSelect != null && mc.player != null && mc.screen == null) {
             PartyPayloads.OpenRoleSelect p = pendingRoleSelect;
             pendingRoleSelect = null;
