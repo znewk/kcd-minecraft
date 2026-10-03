@@ -83,7 +83,6 @@ public class KcdTitleScreen extends Screen {
 
         renderTip(g, alpha);
 
-        g.drawString(font, Component.translatable("kcd.menu.private").withStyle(ChatFormatting.ITALIC), 6, height - 20, 0x9A8F7A | alpha, true);
         g.drawString(font, Component.translatable("kcd.menu.copyright"), 6, height - 10, 0x9A8F7A | alpha, true);
         String version = "KCD by znewk · v" + KcdMod.version();
         g.drawString(font, version, width - font.width(version) - 6, height - 10, 0x9A8F7A | alpha, true);
