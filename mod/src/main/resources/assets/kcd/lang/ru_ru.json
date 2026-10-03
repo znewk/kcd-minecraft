@@ -78,6 +78,7 @@
   "kcd.dialogue.decider": "Отвечает: %s · нажми вариант, чтобы подсказать",
   "kcd.dialogue.story": "Решает Индржих",
   "kcd.dialogue.suggested": "← %s",
+  "kcd.dialogue.busy_nearby": "%s говорит с жителем «%s» — слушай вместе с отрядом.",
   "kcd.check.persuasion": "Убеждение",
   "kcd.check.coercion": "Принуждение",
   "kcd.check.impress": "Впечатление",

@@ -89,6 +89,15 @@ public final class DialogueService {
         if (def == null) return;
 
         Conversation busy = BY_NPC.get(npc.getId());
+        if (busy == null) {
+            // отряд рядом разговаривает с другим жителем — подключаемся к их разговору, а не начинаем свой
+            busy = nearbyConversation(player);
+            if (busy != null) {
+                ServerPlayer talker = player(busy, busy.speaker);
+                player.displayClientMessage(Component.translatable("kcd.dialogue.busy_nearby",
+                    talker == null ? "?" : name(talker), busy.def.name()), true);
+            }
+        }
         if (busy != null) {
             // житель занят — присоединяемся к разговору зрителем
             busy.left.remove(player.getUUID());
@@ -108,6 +117,16 @@ public final class DialogueService {
         BY_NPC.put(npc.getId(), c);
         npc.setTalkingTo(player.getUUID());
         enter(c, startNode);
+    }
+
+    /** Идущий разговор, который игрок видит (житель в радиусе), — в нём он и должен участвовать. */
+    @Nullable
+    private static Conversation nearbyConversation(ServerPlayer player) {
+        for (Conversation c : BY_NPC.values()) {
+            if (c.speaker.equals(player.getUUID())) continue;
+            if (c.npc.level() == player.level() && c.npc.distanceToSqr(player) <= VIEW_RADIUS * VIEW_RADIUS) return c;
+        }
+        return null;
     }
 
     @Nullable

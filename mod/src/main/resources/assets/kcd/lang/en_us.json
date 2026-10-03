@@ -78,6 +78,7 @@
   "kcd.dialogue.decider": "%s answers · click an option to suggest it",
   "kcd.dialogue.story": "Henry decides",
   "kcd.dialogue.suggested": "← %s",
+  "kcd.dialogue.busy_nearby": "%s is talking to %s — listen with your party.",
   "kcd.check.persuasion": "Persuasion",
   "kcd.check.coercion": "Coercion",
   "kcd.check.impress": "Impress",

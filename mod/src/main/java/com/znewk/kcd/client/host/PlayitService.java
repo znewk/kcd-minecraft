@@ -32,10 +32,12 @@ public final class PlayitService {
     public enum State { IDLE, DOWNLOADING, CLAIMING, CONNECTING, ONLINE, ERROR }
 
     private static final String API = "https://api.playit.gg";
-    private static final String EXE_URL = "https://github.com/playit-cloud/playit-agent/releases/download/v1.0.10/playit-windows-x86_64-signed.exe";
-    private static final String EXE_SHA256 = "2dbdaad119844cbbc062cc9774b8b462afa5f1b4b7832a9fc5ef4676cae887cf";
+    /** Версия агента playit (github.com/playit-cloud/playit-agent/releases). */
+    private static final String AGENT_VERSION = "1.0.12";
+    private static final String EXE_URL = "https://github.com/playit-cloud/playit-agent/releases/download/v" + AGENT_VERSION + "/playit-windows-x86_64-signed.exe";
+    private static final String EXE_SHA256 = "367fb813a20c67c7501e3921298ce51a641e5b25e6005f6059808f89404ba44b";
     private static final HttpClient HTTP = HttpClient.newBuilder()
-        .followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofSeconds(15)).build();
+        .followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofSeconds(30)).build();
 
     private static volatile State state = State.IDLE;
     private static volatile String address;
@@ -98,9 +100,9 @@ public final class PlayitService {
 
             state = State.CONNECTING;
             HostSession.notifyStatus();
-            address = ensureTunnel(secret, agentId);
-
+            // сначала агент выходит на связь (сервис узнаёт его версию), потом создаём адрес
             startProcess(exe, dir, secret);
+            address = tunnelWhenAgentReady(secret, agentId);
             state = State.ONLINE;
             HostSession.notifyAddress(address);
 
@@ -133,10 +135,21 @@ public final class PlayitService {
         state = State.DOWNLOADING;
         HostSession.notifyStatus();
         Path tmp = dir.resolve("playit.exe.part");
-        HttpResponse<InputStream> resp = HTTP.send(HttpRequest.newBuilder(URI.create(EXE_URL)).build(), HttpResponse.BodyHandlers.ofInputStream());
-        if (resp.statusCode() != 200) throw new IOException("не удалось скачать playit (HTTP " + resp.statusCode() + ")");
-        try (InputStream in = resp.body()) {
-            Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
+        // GitHub иногда долго отвечает — три попытки
+        for (int attempt = 1; ; attempt++) {
+            try {
+                HttpResponse<InputStream> resp = HTTP.send(HttpRequest.newBuilder(URI.create(EXE_URL)).timeout(Duration.ofMinutes(3)).build(),
+                    HttpResponse.BodyHandlers.ofInputStream());
+                if (resp.statusCode() != 200) throw new IOException("не удалось скачать playit (HTTP " + resp.statusCode() + ")");
+                try (InputStream in = resp.body()) {
+                    Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
+                }
+                break;
+            } catch (IOException e) {
+                if (attempt >= 3 || stopRequested) throw e;
+                KcdMod.LOGGER.warn("KCD: скачивание playit, попытка {}: {}", attempt, e.toString());
+                Thread.sleep(3000L * attempt);
+            }
         }
         if (!EXE_SHA256.equals(sha256(tmp))) {
             Files.deleteIfExists(tmp);
@@ -190,7 +203,8 @@ public final class PlayitService {
             JsonObject req = new JsonObject();
             req.addProperty("code", code);
             req.addProperty("agent_type", "self-managed");
-            req.addProperty("version", "kcd-" + KcdMod.version());
+            // как официальный агент: сервис проверяет версию и отказывает «слишком старым»
+            req.addProperty("version", "playit " + AGENT_VERSION);
             JsonObject resp = call("/claim/setup", req, null);
             String status = resp.get("status").getAsString();
             String data = resp.has("data") && resp.get("data").isJsonPrimitive() ? resp.get("data").getAsString() : String.valueOf(resp.get("data"));
@@ -226,15 +240,35 @@ public final class PlayitService {
 
     // ------------------------------------------------------------------ туннель
 
+    /** Пока только что запущенный агент не отметился у сервиса, создание туннеля отвечает AgentVersionTooOld — ждём до минуты. */
+    private static String tunnelWhenAgentReady(String secret, String agentId) throws IOException, InterruptedException {
+        for (int i = 0; ; i++) {
+            try {
+                return ensureTunnel(secret, agentId);
+            } catch (HttpStatusException e) {
+                if (i >= 20 || stopRequested || !String.valueOf(e.getMessage()).contains("AgentVersionTooOld")) throw e;
+                if (process != null && !process.isAlive()) throw new IOException("агент playit завершился, см. kcd/playit/playit.log");
+                Thread.sleep(3000);
+            }
+        }
+    }
+
     private static String ensureTunnel(String secret, String agentId) throws IOException, InterruptedException {
         String found = findTunnel(secret, agentId);
-        if (found != null) return found;
+        if (found != null) {
+            fixLocalPort(secret, agentId);
+            return found;
+        }
 
         JsonObject protocol = new JsonObject();
         protocol.addProperty("type", "tunnel-type");
         protocol.addProperty("details", "minecraft-java");
+        // без local_port агент молча пропускает туннель (адрес *.tun.ply.gg без порта) — друзья ловят таймаут
+        JsonArray fields = new JsonArray();
+        fields.add(field("local_ip", "127.0.0.1"));
+        fields.add(field("local_port", String.valueOf(HostSession.PORT)));
         JsonObject config = new JsonObject();
-        config.add("fields", new JsonArray());
+        config.add("fields", fields);
         JsonObject originData = new JsonObject();
         originData.addProperty("agent_id", agentId);
         originData.add("config", config);
@@ -261,6 +295,40 @@ public final class PlayitService {
             if (found != null) return found;
         }
         throw new IOException("playit: туннель создан, но адрес не появился");
+    }
+
+    private static JsonObject field(String name, String value) {
+        JsonObject f = new JsonObject();
+        f.addProperty("name", name);
+        f.addProperty("value", value);
+        return f;
+    }
+
+    /** Туннели, созданные версиями мода до 0.0.4, — без local_port; дописываем. */
+    private static void fixLocalPort(String secret, String agentId) throws IOException, InterruptedException {
+        JsonObject run = call("/v1/agents/rundata", new JsonObject(), secret);
+        JsonArray tunnels = run.getAsJsonObject("data").getAsJsonArray("tunnels");
+        if (tunnels == null) return;
+        for (JsonElement t : tunnels) {
+            JsonObject tunnel = t.getAsJsonObject();
+            if (!"minecraft-java".equals(str(tunnel, "tunnel_type"))) continue;
+            boolean hasPort = false;
+            JsonObject cfg = tunnel.getAsJsonObject("agent_config");
+            if (cfg != null && cfg.has("fields")) {
+                for (JsonElement f : cfg.getAsJsonArray("fields")) {
+                    if ("local_port".equals(str(f.getAsJsonObject(), "name"))) hasPort = true;
+                }
+            }
+            if (hasPort) continue;
+            JsonObject req = new JsonObject();
+            req.addProperty("tunnel_id", str(tunnel, "id"));
+            req.addProperty("local_ip", "127.0.0.1");
+            req.addProperty("local_port", HostSession.PORT);
+            req.addProperty("agent_id", agentId);
+            req.addProperty("enabled", true);
+            call("/tunnels/update", req, secret);
+            KcdMod.LOGGER.info("KCD: туннелю playit {} прописан local_port {}", str(tunnel, "id"), HostSession.PORT);
+        }
     }
 
     private static String findTunnel(String secret, String agentId) throws IOException, InterruptedException {
