@@ -1,0 +1,18 @@
+{
+  "music.tavern": {
+    "sounds": [
+      { "name": "kcd:music/tavern_old_tower_inn", "stream": true },
+      { "name": "kcd:music/tavern_minstrel_dance", "stream": true }
+    ]
+  },
+  "music.town": {
+    "sounds": [
+      { "name": "kcd:music/town_market_day", "stream": true }
+    ]
+  },
+  "music.village": {
+    "sounds": [
+      { "name": "kcd:music/village_harvest_season", "stream": true }
+    ]
+  }
+}
