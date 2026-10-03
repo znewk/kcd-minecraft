@@ -20,3 +20,7 @@ desktop.ini
 # Тестовый сервер
 server/
 
+
+# Папки IDE (VS Code / Eclipse) — копии сборки
+mod/bin/
+mod/.eclipse/
