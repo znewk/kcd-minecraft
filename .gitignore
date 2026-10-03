@@ -1,0 +1,18 @@
+# Gradle / IDE
+.gradle/
+build/
+out/
+run/
+runs/
+*.iml
+.idea/
+.vscode/
+
+# Сборки и тяжёлые файлы — только в GitHub Releases
+dist/
+*.zip
+worlds/
+
+# Системное
+Thumbs.db
+desktop.ini
