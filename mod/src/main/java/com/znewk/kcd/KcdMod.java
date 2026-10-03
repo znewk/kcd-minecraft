@@ -1,20 +1,23 @@
 package com.znewk.kcd;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+
+import com.znewk.kcd.network.KcdNetwork;
+import com.znewk.kcd.party.PartyService;
 
 /** Главный класс мода KCD. Здесь подключаются все системы (отряд, диалоги, квесты, NPC...). */
 @Mod(KcdMod.MODID)
@@ -24,7 +27,13 @@ public class KcdMod {
 
     public KcdMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
-        NeoForge.EVENT_BUS.register(this);
+        modEventBus.addListener(KcdNetwork::register);
+
+        NeoForge.EVENT_BUS.addListener(this::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(PartyService::onLogin);
+        NeoForge.EVENT_BUS.addListener(PartyService::onNameFormat);
+        NeoForge.EVENT_BUS.addListener(PartyService::onTabListNameFormat);
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> PartyService.registerCommands(e.getDispatcher()));
     }
 
     private static String version;
@@ -49,8 +58,7 @@ public class KcdMod {
         LOGGER.info("KCD: мод загружен");
     }
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+    private void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("KCD: сервер запускается");
     }
 }

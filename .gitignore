@@ -16,3 +16,7 @@ worlds/
 # Системное
 Thumbs.db
 desktop.ini
+
+# Тестовый сервер
+server/
+

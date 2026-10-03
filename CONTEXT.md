@@ -269,4 +269,9 @@
   в конце — открытые вопросы к пользователю).
 - Решено: музыка (свободная + личная папка), братья-сыновья Мартина, отряд до 12, тюрьма → дебаффы.
 - Ждут ответа пользователя: 1.21.1 NeoForge; мелкие вопросы в конце концепции.
-- Следующий шаг после ответов: веха M0 (окружение).
+- M0 готова (03.10.2026): мод собирается, версия «KCD» в TLauncher работает, главное меню KCD2-стиля, музыка меню.
+- M1 в работе: готово — отряд и роли (`party/`: PartyData, PartyService, экран RoleSelectScreen, команды
+  `/kcd role list|reset|henry`), выделенный сервер `server/` (не в git; offline-mode, flat, RCON 25575 пароль
+  kcd-local), `tools/start-server.bat`, `tools/start-playit.bat` (playit.exe в server/playit),
+  `tools/make-client-zip.ps1` → `dist/KCD-client-v*.zip`, `tools/rcon.ps1`.
+  Дальше: NPC + диалоги, квест + журнал, компас, кат-сцена, тестовая деревня; whitelist + мод входа по паролю.

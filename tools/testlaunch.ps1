@@ -1,4 +1,6 @@
-param([int]$WaitSec = 600, [int]$StaySec = 15)
+param([int]$WaitSec = 600, [int]$StaySec = 15, [string]$Join = '', [string]$User = 'znewk',
+      [string]$Uuid = '7199fa50-b9f1-11eb-b83c-d45d64bce613', [string]$Shot = '', [int]$ShotDelay = 12, [string]$Xmx = '4G',
+      [string]$JoinedPattern = 'joined the game', [string]$ServerLog = "$PSScriptRoot\..\server\console.txt")
 # Пробный запуск версии «KCD» так же, как это делает TLauncher (NeoForge 1.21.1):
 # ждёт главное меню или краш, затем закрывает игру. Лог: versions\KCD\logs\latest.log
 $mc   = "$env:APPDATA\.minecraft"
@@ -26,7 +28,7 @@ $modulePath = @(
 $log = "$gd\logs\latest.log"
 if (Test-Path $log) { Remove-Item $log -Force }
 $crashBefore = @(Get-ChildItem "$gd\crash-reports" -ErrorAction SilentlyContinue).Count
-$jargs = @('-Xmx6G', '-XX:+UseG1GC', '-Dfml.ignoreInvalidMinecraftCertificates=true', '-Dfml.ignorePatchDiscrepancies=true',
+$jargs = @("-Xmx$Xmx", '-XX:+UseG1GC', '-Dfml.ignoreInvalidMinecraftCertificates=true', '-Dfml.ignorePatchDiscrepancies=true',
     "-Djava.library.path=$gd\natives", "-Dorg.lwjgl.system.SharedLibraryExtractPath=$gd\natives",
     '-Dminecraft.launcher.brand=minecraft-launcher', '-Dminecraft.launcher.version=2.3.173',
     '-cp', ($cp -join ';'), '-DignoreList=client-extra,KCD.jar', "-DlibraryDirectory=$lib",
@@ -35,21 +37,46 @@ $jargs = @('-Xmx6G', '-XX:+UseG1GC', '-Dfml.ignoreInvalidMinecraftCertificates=t
     '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler', '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming',
     "-Dlog4j.configurationFile=$mc\assets\log_configs\client-1.12.xml",
     'cpw.mods.bootstraplauncher.BootstrapLauncher',
-    '--username', 'znewk', '--version', $ver, '--gameDir', $gd, '--assetsDir', "$mc\assets", '--assetIndex', '17',
-    '--uuid', '7199fa50-b9f1-11eb-b83c-d45d64bce613', '--accessToken', 'null', '--userType', 'mojang', '--versionType', 'modified',
+    '--username', $User, '--version', $ver, '--gameDir', $gd, '--assetsDir', "$mc\assets", '--assetIndex', '17',
+    '--uuid', $Uuid, '--accessToken', 'null', '--userType', 'mojang', '--versionType', 'modified',
     '--width', '925', '--height', '530',
     '--fml.neoForgeVersion', '21.1.252', '--fml.fmlVersion', '4.0.44', '--fml.mcVersion', '1.21.1', '--fml.neoFormVersion', '20240808.144430',
     '--launchTarget', 'forgeclient')
+if ($Join) { $jargs += @('--quickPlayMultiplayer', $Join) }
 $quoted = $jargs | ForEach-Object { if ($_ -match '\s') { '"' + $_ + '"' } else { $_ } }
 $out = "$env:TEMP\kcd-testlaunch"; New-Item -ItemType Directory -Force $out | Out-Null
 $p = Start-Process -FilePath $java -ArgumentList $quoted -WorkingDirectory $gd -PassThru -RedirectStandardOutput "$out\stdout.txt" -RedirectStandardError "$out\stderr.txt"
 $t0 = Get-Date; $result = 'TIMEOUT'
+$joinedBefore = if ($Join -and (Test-Path $ServerLog)) { @(Select-String -Path $ServerLog -Pattern "$User $JoinedPattern").Count } else { 0 }
 while (((Get-Date) - $t0).TotalSeconds -lt $WaitSec) {
     Start-Sleep 3
     if ($p.HasExited) { $result = "EXITED code=$($p.ExitCode)"; break }
-    if ((Test-Path $log) -and (Select-String -Path $log -Pattern 'Sound engine started' -Quiet)) {
-        Start-Sleep $StaySec; $result = if ($p.HasExited) { "EXITED code=$($p.ExitCode)" } else { 'MAIN_MENU_REACHED' }; break
+    if ($Join) {
+        if ((Test-Path $ServerLog) -and @(Select-String -Path $ServerLog -Pattern "$User $JoinedPattern").Count -gt $joinedBefore) { $result = 'JOINED_SERVER'; break }
+    } elseif ((Test-Path $log) -and (Select-String -Path $log -Pattern 'Sound engine started' -Quiet)) {
+        $result = 'MAIN_MENU_REACHED'; break
     }
+}
+if ($result -in 'MAIN_MENU_REACHED', 'JOINED_SERVER') {
+    if ($Shot) {
+        Start-Sleep $ShotDelay
+        Add-Type -AssemblyName System.Drawing
+        Add-Type @'
+using System; using System.Runtime.InteropServices;
+public static class KcdWin { [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; }
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h); }
+'@ -ErrorAction SilentlyContinue
+        $p.Refresh(); $h = $p.MainWindowHandle
+        [KcdWin]::SetForegroundWindow($h) | Out-Null; Start-Sleep 1
+        $r = New-Object KcdWin+RECT; [KcdWin]::GetWindowRect($h, [ref]$r) | Out-Null
+        $bmp = New-Object Drawing.Bitmap ($r.R - $r.L), ($r.B - $r.T)
+        $gfx = [Drawing.Graphics]::FromImage($bmp); $gfx.CopyFromScreen($r.L, $r.T, 0, 0, $bmp.Size); $bmp.Save($Shot); $gfx.Dispose(); $bmp.Dispose()
+        "SCREENSHOT: $Shot"
+    }
+    $remain = $StaySec - $(if ($Shot) { $ShotDelay } else { 0 })
+    if ($remain -gt 0) { Start-Sleep $remain }
+    if ($p.HasExited) { $result = "EXITED code=$($p.ExitCode) (after $result)" }
 }
 "RESULT: $result after $([int]((Get-Date) - $t0).TotalSeconds)s"
 if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force }
