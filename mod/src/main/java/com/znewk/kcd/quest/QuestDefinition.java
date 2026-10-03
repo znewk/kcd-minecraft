@@ -25,7 +25,8 @@ import net.minecraft.util.GsonHelper;
  */
 public record QuestDefinition(String id, String title, boolean main, Map<String, String> entries, List<Objective> objectives) {
 
-    public record Objective(String id, String text, List<String> after) {}
+    /** target — куда указывает компас: "npc:kcd:guard" (ближайший такой житель) или null (только словами, как часто в KCD2). */
+    public record Objective(String id, String text, List<String> after, @javax.annotation.Nullable String target) {}
 
     static QuestDefinition parse(String id, JsonObject o) {
         String type = GsonHelper.getAsString(o, "type", "side");
@@ -41,7 +42,8 @@ public record QuestDefinition(String id, String title, boolean main, Map<String,
             JsonObject ob = e.getAsJsonObject();
             List<String> after = new ArrayList<>();
             if (ob.has("after")) for (JsonElement a : GsonHelper.getAsJsonArray(ob, "after")) after.add(a.getAsString());
-            objectives.add(new Objective(GsonHelper.getAsString(ob, "id"), GsonHelper.getAsString(ob, "text"), List.copyOf(after)));
+            objectives.add(new Objective(GsonHelper.getAsString(ob, "id"), GsonHelper.getAsString(ob, "text"), List.copyOf(after),
+                ob.has("target") ? GsonHelper.getAsString(ob, "target") : null));
         }
         return new QuestDefinition(id, GsonHelper.getAsString(o, "title"), type.equals("main"), Map.copyOf(entries), List.copyOf(objectives));
     }

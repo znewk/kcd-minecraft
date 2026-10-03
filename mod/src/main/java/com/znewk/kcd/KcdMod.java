@@ -17,6 +17,9 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import com.znewk.kcd.auth.AuthService;
+import com.znewk.kcd.cutscene.CutsceneRegistry;
+import com.znewk.kcd.cutscene.CutsceneService;
 import com.znewk.kcd.dialogue.DialogueRegistry;
 import com.znewk.kcd.dialogue.DialogueService;
 import com.znewk.kcd.network.KcdNetwork;
@@ -52,9 +55,18 @@ public class KcdMod {
             e.addListener(new NpcRegistry());
             e.addListener(new DialogueRegistry());
             e.addListener(new QuestRegistry());
+            e.addListener(new CutsceneRegistry());
         });
         NeoForge.EVENT_BUS.addListener(DialogueService::onServerTick);
         NeoForge.EVENT_BUS.addListener(QuestService::onLogin);
+        NeoForge.EVENT_BUS.addListener(QuestService::onServerTick);
+        NeoForge.EVENT_BUS.addListener(CutsceneService::onServerTick);
+        NeoForge.EVENT_BUS.addListener(CutsceneService::onDamage);
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> CutsceneService.registerCommands(e.getDispatcher()));
+        NeoForge.EVENT_BUS.addListener(AuthService::onLogin);
+        NeoForge.EVENT_BUS.addListener(AuthService::onLogout);
+        NeoForge.EVENT_BUS.addListener(AuthService::onServerTick);
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> AuthService.registerCommands(e.getDispatcher()));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> QuestService.registerCommands(e.getDispatcher()));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> TestVillage.registerCommands(e.getDispatcher()));
     }

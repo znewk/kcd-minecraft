@@ -120,5 +120,16 @@
   "kcd.quest.notice.2": "Quest completed",
   "kcd.quest.notice.3": "Quest failed",
   "kcd.quest.reset": "All party quests reset.",
+  "kcd.auth.denied": "The name %s is bound to another player's PC in this party. If it's you on a new PC — ask the host: /kcd auth reset %1$s",
+  "kcd.auth.timeout": "The server did not receive the player key. You need the same KCD build as the host.",
+  "kcd.auth.reset": "Binding for %s reset — it will bind again on next join.",
+  "kcd.auth.unknown": "%s is not bound yet.",
+  "kcd.cutscene.gather": "Story scene",
+  "kcd.cutscene.ready": "Ready",
+  "kcd.cutscene.waiting": "Party gathering: %s of %s ready · starts in %s s",
+  "kcd.cutscene.you_ready": "You are ready. Waiting for the others…",
+  "kcd.cutscene.skip": "Space — skip",
+  "kcd.cutscene.skip_wait": "Skip: %s of %s",
+  "kcd.cutscene.unknown": "No cutscene \"%s\".",
   "kcd.village.built": "Test village built. Talk to Martin at the forge (right-click). Journal — J."
 }

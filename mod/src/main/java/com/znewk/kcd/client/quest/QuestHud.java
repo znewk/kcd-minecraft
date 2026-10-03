@@ -47,7 +47,7 @@ public final class QuestHud {
         }
         float a = Mth.clamp(Math.min(age, SHOW_TICKS - age) / FADE, 0F, 1F);
         int alpha = Math.max(4, (int) (a * 255)) << 24;
-        int cx = g.guiWidth() / 2, y = 22;
+        int cx = g.guiWidth() / 2, y = 36; // под компасом
 
         Component caption = Component.translatable("kcd.quest.notice." + current.kind());
         Component title = Component.literal(current.title());
@@ -72,7 +72,7 @@ public final class QuestHud {
 
     private static void tracker(GuiGraphics g, Font font) {
         int right = g.guiWidth() - 8;
-        int y = 66; // ниже плашки «Новое задание»
+        int y = 80; // ниже компаса и плашки «Новое задание»
         int maxW = 170;
         for (String id : ClientQuests.tracked()) {
             QuestPayloads.Quest q = ClientQuests.get(id);

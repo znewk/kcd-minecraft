@@ -4,14 +4,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import com.znewk.kcd.auth.AuthService;
+import com.znewk.kcd.client.ClientAuth;
 import com.znewk.kcd.client.ClientPayloads;
+import com.znewk.kcd.client.cutscene.ClientCutscenes;
+import com.znewk.kcd.cutscene.CutsceneService;
 import com.znewk.kcd.client.quest.ClientQuests;
 import com.znewk.kcd.dialogue.DialogueService;
 import com.znewk.kcd.party.PartyService;
 
 /** Регистрация всех пакетов мода. Клиентские обработчики вызываются только на клиенте. */
 public final class KcdNetwork {
-    public static final String VERSION = "2";
+    public static final String VERSION = "3";
 
     private KcdNetwork() {}
 
@@ -35,5 +39,14 @@ public final class KcdNetwork {
 
         r.playToClient(QuestPayloads.Sync.TYPE, QuestPayloads.Sync.CODEC, (p, ctx) -> ClientQuests.sync(p));
         r.playToClient(QuestPayloads.Notice.TYPE, QuestPayloads.Notice.CODEC, (p, ctx) -> ClientQuests.notice(p));
+
+        r.playToClient(AuthPayloads.Challenge.TYPE, AuthPayloads.Challenge.CODEC, (p, ctx) -> ClientAuth.challenge(p));
+        r.playToClient(AuthPayloads.Issue.TYPE, AuthPayloads.Issue.CODEC, (p, ctx) -> ClientAuth.issue(p));
+        r.playToServer(AuthPayloads.Response.TYPE, AuthPayloads.Response.CODEC, (p, ctx) -> AuthService.onResponse((ServerPlayer) ctx.player(), p));
+
+        r.playToClient(CutscenePayloads.Gather.TYPE, CutscenePayloads.Gather.CODEC, (p, ctx) -> ClientCutscenes.gather(p));
+        r.playToClient(CutscenePayloads.Start.TYPE, CutscenePayloads.Start.CODEC, (p, ctx) -> ClientCutscenes.start(p));
+        r.playToClient(CutscenePayloads.State.TYPE, CutscenePayloads.State.CODEC, (p, ctx) -> ClientCutscenes.state(p));
+        r.playToServer(CutscenePayloads.Action.TYPE, CutscenePayloads.Action.CODEC, (p, ctx) -> CutsceneService.onAction((ServerPlayer) ctx.player(), p));
     }
 }

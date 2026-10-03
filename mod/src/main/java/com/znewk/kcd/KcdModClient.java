@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import com.znewk.kcd.client.ClientPayloads;
 import com.znewk.kcd.client.KcdKeys;
 import com.znewk.kcd.client.quest.ClientQuests;
+import com.znewk.kcd.client.quest.CompassHud;
 import com.znewk.kcd.client.quest.QuestHud;
 import com.znewk.kcd.client.gui.DialogueScreen;
 import com.znewk.kcd.client.gui.KcdTitleScreen;
@@ -38,7 +39,10 @@ public class KcdModClient {
         modEventBus.addListener((EntityRenderersEvent.RegisterRenderers e) -> e.registerEntityRenderer(KcdEntities.NPC.get(), KcdNpcRenderer::new));
         NeoForge.EVENT_BUS.addListener(DialogueScreen::onComputeFov);
         modEventBus.addListener(KcdKeys::register);
-        modEventBus.addListener((RegisterGuiLayersEvent e) -> e.registerAboveAll(ResourceLocation.fromNamespaceAndPath(KcdMod.MODID, "quests"), QuestHud::render));
+        modEventBus.addListener((RegisterGuiLayersEvent e) -> {
+            e.registerAboveAll(ResourceLocation.fromNamespaceAndPath(KcdMod.MODID, "compass"), CompassHud::render);
+            e.registerAboveAll(ResourceLocation.fromNamespaceAndPath(KcdMod.MODID, "quests"), QuestHud::render);
+        });
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenOpening);
         NeoForge.EVENT_BUS.addListener(KcdModClient::onScreenInit);
         NeoForge.EVENT_BUS.addListener(ClientPayloads::onNameFormat);

@@ -10,14 +10,15 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public final class QuestPayloads {
     private QuestPayloads() {}
 
-    public record Objective(String text, boolean done) {}
+    /** Цель; hasPos — есть метка на компасе в точке (x, y, z). */
+    public record Objective(String text, boolean done, boolean hasPos, double x, double y, double z) {}
 
     /** status: 0 — активно, 1 — выполнено, 2 — провалено. Цели — только видимые. */
     public record Quest(String id, String title, boolean main, int status, List<String> diary, List<Objective> objectives) {
         static Quest read(FriendlyByteBuf buf) {
             return new Quest(buf.readUtf(), buf.readUtf(), buf.readBoolean(), buf.readVarInt(),
                 buf.readList(FriendlyByteBuf::readUtf),
-                buf.readList(b -> new Objective(b.readUtf(), b.readBoolean())));
+                buf.readList(b -> new Objective(b.readUtf(), b.readBoolean(), b.readBoolean(), b.readDouble(), b.readDouble(), b.readDouble())));
         }
 
         void write(FriendlyByteBuf buf) {
@@ -29,6 +30,10 @@ public final class QuestPayloads {
             buf.writeCollection(objectives, (b, o) -> {
                 b.writeUtf(o.text());
                 b.writeBoolean(o.done());
+                b.writeBoolean(o.hasPos());
+                b.writeDouble(o.x());
+                b.writeDouble(o.y());
+                b.writeDouble(o.z());
             });
         }
     }

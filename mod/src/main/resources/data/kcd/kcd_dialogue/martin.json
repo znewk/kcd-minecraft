@@ -69,7 +69,7 @@
       "text": "Ну? Крестовина где? Уголь где? Чего стоишь?",
       "options": [
         { "text": "Вот крестовина и уголь, отец.", "if": ["objective:radzig_sword:crossguard", "has:minecraft:charcoal*10"],
-          "do": ["take:minecraft:charcoal*10", "complete:radzig_sword", "rep:+5"], "next": "finished" },
+          "do": ["take:minecraft:charcoal*10", "complete:radzig_sword", "rep:+5", "cutscene:sword_done"], "next": "end" },
         { "text": "Угольщик просит деньги вперёд.", "if": ["!objective:radzig_sword:charcoal"], "once": true, "next": "charcoal_hint" },
         { "text": "Отец, расскажи про Кутна-Гору.", "if": ["rep:3"], "once": true, "next": "kutna" },
         { "text": "Уже иду.", "next": "end" }

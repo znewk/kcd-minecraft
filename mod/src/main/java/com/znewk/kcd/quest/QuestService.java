@@ -3,6 +3,8 @@ package com.znewk.kcd.quest;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -13,12 +15,16 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import com.znewk.kcd.KcdPerms;
 import com.znewk.kcd.KcdMod;
 import com.znewk.kcd.network.QuestPayloads;
+import com.znewk.kcd.npc.KcdEntities;
+import com.znewk.kcd.npc.KcdNpc;
 
 /**
  * Задания отряда: получить, отметить цель, запись в дневник, выполнить/провалить. Всё общее на отряд —
@@ -99,7 +105,8 @@ public final class QuestService {
     }
 
     public static void sync(MinecraftServer server) {
-        PacketDistributor.sendToAllPlayers(snapshot(server));
+        lastSent = snapshot(server);
+        PacketDistributor.sendToAllPlayers(lastSent);
     }
 
     private static QuestPayloads.Sync snapshot(MinecraftServer server) {
@@ -115,11 +122,39 @@ public final class QuestService {
             List<QuestPayloads.Objective> objs = new ArrayList<>();
             for (QuestDefinition.Objective o : def.objectives()) {
                 if (!s.done.containsAll(o.after())) continue;
-                objs.add(new QuestPayloads.Objective(o.text(), s.done.contains(o.id())));
+                boolean done = s.done.contains(o.id());
+                Vec3 pos = done || s.status != QuestData.Status.ACTIVE ? null : targetPos(server, o.target());
+                objs.add(pos == null
+                    ? new QuestPayloads.Objective(o.text(), done, false, 0, 0, 0)
+                    : new QuestPayloads.Objective(o.text(), done, true, pos.x, pos.y, pos.z));
             }
             out.add(new QuestPayloads.Quest(id, def.title(), def.main(), s.status.ordinal(), diary, objs));
         });
         return new QuestPayloads.Sync(out);
+    }
+
+    /** Куда указывает компас. "npc:<id>" — первый загруженный житель с этим описанием. */
+    @Nullable
+    public static Vec3 targetPos(MinecraftServer server, @Nullable String target) {
+        if (target == null || !target.startsWith("npc:")) return null;
+        String npcId = target.substring(4);
+        for (KcdNpc npc : server.overworld().getEntities(KcdEntities.NPC.get(), n -> npcId.equals(n.npcId()))) {
+            return npc.position();
+        }
+        return null;
+    }
+
+    private static QuestPayloads.Sync lastSent;
+
+    /** Раз в 5 секунд: если цели сдвинулись (житель построен/пришёл), тихо обновить журнал у всех. */
+    public static void onServerTick(ServerTickEvent.Post event) {
+        MinecraftServer server = event.getServer();
+        if (server.getTickCount() % 100 != 0 || server.getPlayerCount() == 0) return;
+        QuestPayloads.Sync now = snapshot(server);
+        if (!now.equals(lastSent)) {
+            lastSent = now;
+            PacketDistributor.sendToAllPlayers(now);
+        }
     }
 
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {

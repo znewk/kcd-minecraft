@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import com.znewk.kcd.KcdMod;
+import com.znewk.kcd.cutscene.CutsceneService;
 import com.znewk.kcd.network.DialoguePayloads;
 import com.znewk.kcd.npc.KcdNpc;
 import com.znewk.kcd.npc.NpcDefinition;
@@ -336,6 +337,7 @@ public final class DialogueService {
                     }
                     case "complete" -> QuestService.finish(server, e.arg(), true);
                     case "fail" -> QuestService.finish(server, e.arg(), false);
+                    case "cutscene" -> CutsceneService.play(server, e.arg());
                     default -> { }
                 }
             } catch (RuntimeException ex) {
